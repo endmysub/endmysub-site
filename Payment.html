@@ -1,0 +1,462 @@
+<!-- Payment.html (FULL)
+Files:
+- index.html
+- cancel.html
+- Payment.html
+- review.html
+- endmysublogo.png
+- endmysublogo2.jpg
+-->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Payment</title>
+
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
+      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+      --ok:rgba(110,231,183,.95);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;border-bottom:1px solid var(--line);
+      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+    }
+    .brand{display:flex;align-items:flex-start}
+    .brand__logo{width:720px;height:230px;object-fit:contain;display:block}
+
+    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px}
+    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted); border:1px solid transparent;font-weight:650}
+    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+
+    .topbar__controls{display:flex;gap:10px;align-items:center;padding-top:6px}
+    .control{display:flex;gap:8px;align-items:center}
+    .control__label{font-size:12px;color:var(--muted)}
+    .control__select{height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text);padding:0 10px}
+
+    .layout{display:grid;grid-template-columns: 1.05fr .95fr; gap:18px; align-items:start}
+
+    .card{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      border-radius:32px;
+      padding:26px;
+      box-shadow:var(--shadow);
+    }
+    .card--soft{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03))}
+    .card__title{margin:0 0 10px;font-size:20px}
+    .card__text{margin:0;color:var(--muted);line-height:1.65;font-size:15px}
+
+    .page-title{margin:6px 0 10px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+    .page-sub{margin:0 0 22px;color:var(--muted);line-height:1.65;max-width:90ch}
+
+    .tabs{display:flex;gap:10px;align-items:center;margin:14px 0 12px}
+    .tab{
+      height:40px;padding:0 14px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.03);color:var(--muted);font-weight:800;cursor:pointer
+    }
+    .tab--active{
+      color:var(--text);
+      border-color:rgba(110,231,183,.35);
+      background:linear-gradient(180deg, rgba(110,231,183,.16), rgba(110,231,183,.08));
+    }
+
+    .check{display:flex;gap:10px;align-items:flex-start;margin:14px 0 10px}
+    .check input{margin-top:4px;width:18px;height:18px}
+    .check p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+
+    .btn{
+      width:100%; height:64px; border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(96,165,250,.18), rgba(96,165,250,.08));
+      color:var(--text); font-weight:950; font-size:16px; cursor:pointer;
+      margin-top:14px;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .fine{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
+
+    .miniInfo{
+      margin-top:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      border-radius:22px;
+      padding:16px;
+      color:rgba(231,236,255,.92);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .blurPanel{
+      position:relative;
+      border-radius:32px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.32)),
+        radial-gradient(1200px 700px at 50% 0%, rgba(255,255,255,.08), transparent 60%),
+        rgba(255,255,255,.03);
+      box-shadow:var(--shadow);
+      padding:28px;
+      min-height:520px;
+    }
+
+    .expert{display:grid;place-items:center;text-align:center;margin-top:12px;margin-bottom:18px}
+    .avatar{
+      width:96px;height:96px;border-radius:999px;
+      border:2px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      overflow:hidden;
+      display:grid;place-items:center;
+    }
+    .avatar img{
+      width:100%;height:100%;
+      object-fit:cover;
+      display:block;
+      filter:saturate(1.05) contrast(1.02);
+    }
+
+    .expertName{margin:10px 0 2px;font-size:22px;font-weight:950}
+    .expertSub{margin:0;color:rgba(231,236,255,.78);font-size:13px}
+    .stars{margin:12px 0 0;color:rgba(255,255,255,.85);font-size:13px;font-weight:800}
+    .hr{height:1px;background:rgba(255,255,255,.12);margin:18px 0}
+
+    .planTitle{margin:0 0 10px;font-size:26px;font-weight:950}
+    .planList{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+    .planItem{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;color:rgba(231,236,255,.90);line-height:1.45}
+    .tick{
+      width:18px;height:18px;border-radius:6px;
+      background:rgba(110,231,183,.14);
+      border:1px solid rgba(110,231,183,.45);
+      display:grid;place-items:center;
+      color:var(--ok);font-weight:950;font-size:12px;
+      margin-top:2px;
+    }
+
+    .quoteBox{margin-top:18px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);border-radius:22px;padding:16px}
+    .quoteText{margin:0;font-size:15px;line-height:1.55;color:rgba(231,236,255,.92)}
+    .quoteBy{margin:10px 0 0;color:var(--muted);font-size:12px;font-weight:800}
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .brand__logo{width:320px;height:90px}
+    }
+  </style>
+
+  <script>
+    (() => {
+      // ====== SET YOUR LINKS HERE ======
+      const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_7sY6oA6MQ9Kbf6IdEgdZ600";
+      const PAYPAL_LINK = "https://paypal.me/1z1d/22";
+      // =================================
+
+      const germanCountries = new Set(["DE","AT","CH"]);
+      const defaultCountry = "DE";
+
+      const dict = {
+        en: {
+          nav_home:"Home",
+          nav_cancel:"Cancel",
+          nav_payment:"Payment",
+          nav_review:"Review",
+          country_label:"Country",
+          lang_label:"Language",
+          page_title:"Choose payment method",
+          page_sub:"Pick PayPal or Card. After payment, we start the cancellation and send confirmation steps.",
+          left_title:"Payment",
+          left_hint:"Select a payment method to continue.",
+          tab_cc:"Credit Card / Apple Pay / Google Pay",
+          tab_pp:"PayPal",
+          agree:"I agree to the Terms, Privacy Policy and Cookie Policy and confirm I am of legal age.",
+          btn_pay:"Continue to payment",
+          fine:"endmysub is a cancellation assistance service. Provider processing times vary.",
+          pay_cc_info:"You will be redirected to Stripe to complete the payment.",
+          pay_pp_info:"You will be redirected to PayPal to complete the payment.",
+          expert_name:"Cancellation Team",
+          expert_sub:"endmysub",
+          plan_title:"Your plan includes",
+          p1:"We handle the cancellation quickly and smoothly.",
+          p2:"You receive confirmation steps and a copy of what was sent.",
+          p3:"Coverage for US and Europe.",
+          q1:"“Stress-free. I didn’t have to chase support.”",
+          q2:"“Paid, done, confirmation came fast.”",
+          q3:"“Clean process. No back-and-forth.”",
+          q_by:"Customer"
+        },
+        de: {
+          nav_home:"Start",
+          nav_cancel:"Kündigung",
+          nav_payment:"Zahlung",
+          nav_review:"Review",
+          country_label:"Land",
+          lang_label:"Sprache",
+          page_title:"Zahlungsmethode auswählen",
+          page_sub:"Wählen Sie PayPal oder Kreditkarte. Nach der Zahlung starten wir die Kündigung und senden Ihnen die Bestätigungsschritte.",
+          left_title:"Zahlung",
+          left_hint:"Wählen Sie eine Zahlungsmethode, um fortzufahren.",
+          tab_cc:"Kreditkarte / Apple Pay / Google Pay",
+          tab_pp:"PayPal",
+          agree:"Ich stimme den Nutzungsbedingungen, dem Datenschutz sowie den Cookie-Richtlinien zu und bestätige, dass ich volljährig bin.",
+          btn_pay:"Weiter zur Zahlung",
+          fine:"endmysub ist ein Kündigungsservice. Bearbeitungszeiten der Anbieter variieren.",
+          pay_cc_info:"Sie werden zu Stripe weitergeleitet, um die Zahlung abzuschließen.",
+          pay_pp_info:"Sie werden zu PayPal weitergeleitet, um die Zahlung abzuschließen.",
+          expert_name:"Kündigungs-Team",
+          expert_sub:"endmysub",
+          plan_title:"Ihr Plan beinhaltet",
+          p1:"Wir erledigen die Kündigung schnell und problemlos.",
+          p2:"Sie erhalten Bestätigungsschritte und eine Kopie der Anfrage.",
+          p3:"Abdeckung für USA und Europa.",
+          q1:"„Mit endmysub stressfrei gekündigt.“",
+          q2:"„Bezahlt, erledigt, klare Bestätigung.“",
+          q3:"„Sauberer Ablauf ohne Hin und Her.“",
+          q_by:"Kundin/Kunde"
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function applyLang(lang){
+        const map = dict[lang] || dict.en;
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-i18n]").forEach(el=>{
+          const k = el.getAttribute("data-i18n");
+          if (map[k] !== undefined) el.textContent = map[k];
+        });
+        rotateQuotes(lang);
+        renderMethodInfo(localStorage.getItem("ems_pay_method") || "cc", lang);
+      }
+
+      function enforceAutoLanguage(countryCode){
+        const langSelect = $("langSelect");
+        if (!langSelect) return;
+        const targetLang = germanCountries.has(countryCode) ? "de" : "en";
+        langSelect.value = targetLang;
+        localStorage.setItem("ems_lang", targetLang);
+        applyLang(targetLang);
+      }
+
+      function rotateQuotes(lang){
+        const map = dict[lang] || dict.en;
+        const items = [map.q1, map.q2, map.q3];
+        let i = 0;
+        const qt = $("rotText");
+        const qb = $("rotBy");
+        if (!qt || !qb) return;
+        const render = () => {
+          qt.textContent = items[i];
+          qb.textContent = map.q_by;
+          i = (i + 1) % items.length;
+        };
+        render();
+        window.__emsPayQuoteTimer && clearInterval(window.__emsPayQuoteTimer);
+        window.__emsPayQuoteTimer = setInterval(render, 3500);
+      }
+
+      function setMethod(method){
+        $("tabCC").classList.toggle("tab--active", method==="cc");
+        $("tabPP").classList.toggle("tab--active", method==="pp");
+        localStorage.setItem("ems_pay_method", method);
+        const lang = localStorage.getItem("ems_lang") || "de";
+        renderMethodInfo(method, lang);
+      }
+
+      function renderMethodInfo(method, lang){
+        const map = dict[lang] || dict.en;
+        const box = $("methodInfo");
+        if (!box) return;
+        box.textContent = method === "pp" ? map.pay_pp_info : map.pay_cc_info;
+      }
+
+      function getCancelEmail(){
+        try{
+          const raw = localStorage.getItem("ems_cancel_data");
+          const d = raw ? JSON.parse(raw) : null;
+          return (d?.email || "").trim();
+        } catch {
+          return "";
+        }
+      }
+
+      function goPay(method){
+        const email = getCancelEmail();
+        const cancelId = localStorage.getItem("ems_cancel_id") || "";
+
+        if (method === "pp") {
+          window.location.href = PAYPAL_LINK;
+          return;
+        }
+
+        // Stripe: prefill email (if provided). cancelId added as a hint (may be ignored by Stripe Payment Links).
+        const u = new URL(STRIPE_PAYMENT_LINK);
+        if (email) u.searchParams.set("prefilled_email", email);
+        if (cancelId) u.searchParams.set("client_reference_id", cancelId);
+        window.location.href = u.toString();
+      }
+
+      function init(){
+        const countrySelect = $("countrySelect");
+        const langSelect = $("langSelect");
+
+        const savedCountry = localStorage.getItem("ems_country") || defaultCountry;
+        if (countrySelect) countrySelect.value = savedCountry;
+
+        if (countrySelect){
+          countrySelect.addEventListener("change", e=>{
+            const c = e.target.value;
+            localStorage.setItem("ems_country", c);
+            enforceAutoLanguage(c);
+          });
+        }
+
+        if (langSelect){
+          langSelect.addEventListener("change", e=>{
+            const lang = e.target.value;
+            localStorage.setItem("ems_lang", lang);
+            applyLang(lang);
+          });
+        }
+
+        enforceAutoLanguage(savedCountry);
+
+        const method = localStorage.getItem("ems_pay_method") || "cc";
+        setMethod(method);
+
+        $("tabCC").addEventListener("click", ()=>setMethod("cc"));
+        $("tabPP").addEventListener("click", ()=>setMethod("pp"));
+
+        $("payBtn").addEventListener("click", (e)=>{
+          e.preventDefault();
+          if (!$("agree").checked) return;
+          const m = localStorage.getItem("ems_pay_method") || "cc";
+          goPay(m);
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="endmysub home">
+      <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
+    </a>
+
+    <nav class="topbar__nav">
+      <a class="navlink" href="index.html" data-i18n="nav_home">Start</a>
+      <a class="navlink" href="cancel.html" data-i18n="nav_cancel">Kündigung</a>
+      <a class="navlink navlink--active" href="Payment.html" data-i18n="nav_payment">Zahlung</a>
+      <a class="navlink" href="review.html" data-i18n="nav_review">Review</a>
+    </nav>
+
+    <div class="topbar__controls">
+      <label class="control">
+        <span class="control__label" data-i18n="country_label">Land</span>
+        <select id="countrySelect" class="control__select" aria-label="Country">
+          <optgroup label="North America">
+            <option value="US">United States</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option value="DE">Germany</option>
+            <option value="AT">Austria</option>
+            <option value="CH">Switzerland</option>
+            <option value="FR">France</option>
+            <option value="ES">Spain</option>
+            <option value="IT">Italy</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="PT">Portugal</option>
+            <option value="GB">United Kingdom</option>
+          </optgroup>
+        </select>
+      </label>
+
+      <label class="control">
+        <span class="control__label" data-i18n="lang_label">Sprache</span>
+        <select id="langSelect" class="control__select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title" data-i18n="page_title">Zahlungsmethode auswählen</h1>
+    <p class="page-sub" data-i18n="page_sub">Wählen Sie PayPal oder Kreditkarte. Nach der Zahlung starten wir die Kündigung und senden Ihnen die Bestätigungsschritte.</p>
+
+    <section class="layout">
+      <div class="card card--soft">
+        <h2 class="card__title" data-i18n="left_title">Zahlung</h2>
+        <p class="card__text" data-i18n="left_hint">Wählen Sie eine Zahlungsmethode, um fortzufahren.</p>
+
+        <div class="tabs">
+          <button id="tabCC" class="tab tab--active" type="button" data-i18n="tab_cc">Kreditkarte</button>
+          <button id="tabPP" class="tab" type="button" data-i18n="tab_pp">PayPal</button>
+        </div>
+
+        <div id="methodInfo" class="miniInfo"></div>
+
+        <form autocomplete="on">
+          <label class="check">
+            <input id="agree" type="checkbox" />
+            <p data-i18n="agree">
+              Ich stimme den Nutzungsbedingungen, dem Datenschutz sowie den Cookie-Richtlinien zu und bestätige, dass ich volljährig bin.
+            </p>
+          </label>
+
+          <button id="payBtn" class="btn" type="submit" data-i18n="btn_pay">Weiter zur Zahlung</button>
+
+          <div class="fine" data-i18n="fine">
+            endmysub ist ein Kündigungsservice. Bearbeitungszeiten der Anbieter variieren.
+          </div>
+        </form>
+      </div>
+
+      <aside class="blurPanel">
+        <div class="expert">
+          <div class="avatar">
+            <img src="endmysublogo2.jpg" alt="endmysub" />
+          </div>
+          <div class="expertName" data-i18n="expert_name">Kündigungs-Team</div>
+          <div class="expertSub" data-i18n="expert_sub">endmysub</div>
+          <div class="stars">11,673 happy customers</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3 class="planTitle" data-i18n="plan_title">Ihr Plan beinhaltet</h3>
+        <ul class="planList">
+          <li class="planItem"><span class="tick">✓</span><span data-i18n="p1">Wir erledigen die Kündigung schnell und problemlos.</span></li>
+          <li class="planItem"><span class="tick">✓</span><span data-i18n="p2">Sie erhalten Bestätigungsschritte und eine Kopie der Anfrage.</span></li>
+          <li class="planItem"><span class="tick">✓</span><span data-i18n="p3">Abdeckung für USA und Europa.</span></li>
+        </ul>
+
+        <div class="quoteBox" aria-live="polite">
+          <p id="rotText" class="quoteText"></p>
+          <p id="rotBy" class="quoteBy"></p>
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>
