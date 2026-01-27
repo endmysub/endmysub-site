@@ -1,0 +1,224 @@
+<!-- Payment.html (FULL) — PayPal Hosted Buttons (PayPal + Debit/Credit), kein Stripe
+  FIX:
+  - Logo deutlich größer
+  - "endmysub" Text neben Logo entfernt
+  - Zusatzinfo komplett entfernt (UI + JS)
+  - Redirect nach success.html nach erfolgreicher Zahlung (falls HostedButtons onApprove unterstützt)
+-->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Zahlung</title>
+
+  <style>
+    :root{
+      --bg0:#070b14;
+      --bg1:#0b1220;
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --card:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.12);
+      --shadow:0 18px 40px rgba(0,0,0,.35);
+      --radius:16px;
+      --max:980px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(53,224,143,.24), transparent 60%),
+        radial-gradient(900px 520px at 80% 20%, rgba(96,165,250,.18), transparent 62%),
+        linear-gradient(180deg,var(--bg0),var(--bg1));
+      overflow-x:hidden;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max);margin:0 auto;padding:26px 20px 60px}
+
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:14px 0 18px;border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .brand{
+      display:flex;align-items:center;
+    }
+    .logo{
+      width:520px;
+      height:150px;
+      display:block;
+      filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));
+      object-fit:contain;
+    }
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:44px;padding:0 16px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text);font-weight:900;cursor:pointer;
+      transition:.15s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.085)}
+    .btn:active{transform:translateY(0)}
+
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:18px}
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.05));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    h1{margin:0 0 8px;font-size:28px;letter-spacing:-.3px}
+    p{margin:0 0 10px;color:var(--muted)}
+    .price{font-weight:900;font-size:22px}
+    .muted{color:var(--muted)}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .row:last-child{border-bottom:none}
+    .label{font-weight:900;color:rgba(255,255,255,.78)}
+    .val{color:rgba(255,255,255,.92);text-align:right;max-width:60%}
+    .note{margin-top:10px;font-size:12.5px;color:rgba(255,255,255,.62)}
+    .status{margin-top:10px;font-size:13px}
+    .warn{color:#ffd3b0}
+    .ok{color:#c6ffe9}
+
+    .paybox{
+      margin-top:14px;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.14);
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+      .val{max-width:70%}
+      .logo{width:360px;height:110px}
+    }
+  </style>
+
+  <!-- PayPal Hosted Buttons -->
+  <script
+    src="https://www.paypal.com/sdk/js?client-id=BAA00hDIow9N7whLqy9sjOg6J5OkqlPwBbirHqlD6-qvq-IxxnkF2QlhHlYIZKMnqYwMh8T22uT0q0xClg&components=hosted-buttons&disable-funding=venmo&currency=EUR">
+  </script>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="index.html" aria-label="endmysub home">
+        <img class="logo" src="endmysublogo.png" alt="endmysub Logo" onerror="this.style.display='none'" />
+      </a>
+      <a class="btn" href="cancel.html">Zurück</a>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h1>Zahlung</h1>
+        <p>PayPal oder Debit-/Kreditkarte. Danach erhältst du eine Bestätigung per E-Mail.</p>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:12px 0 6px;">
+          <div class="label">Fixpreis</div>
+          <div class="price">22,00&nbsp;€</div>
+        </div>
+        <div class="note">Kein Abo. Einmalige Zahlung pro Auftrag.</div>
+
+        <div class="paybox">
+          <div id="paypal-container-JCPCE6E7PCW4W"></div>
+        </div>
+
+        <div id="st" class="status"></div>
+
+        <div class="note">
+          Hinweis: Zahlung wird über PayPal durchgeführt (PayPal + Debit-/Kreditkarte). endmysub speichert nur deine Anfrage-Daten.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <div class="label">Deine Anfrage</div>
+          <div class="muted" style="font-weight:900;font-size:12.5px;">aus index.html</div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <div class="row"><div class="label">Abo / Anbieter</div><div class="val" id="v_service">—</div></div>
+          <div class="row"><div class="label">Land</div><div class="val" id="v_country">—</div></div>
+          <div class="row"><div class="label">E-Mail</div><div class="val" id="v_email">—</div></div>
+        </div>
+
+        <div class="note">
+          Wenn hier „—“ steht, wurde das Formular auf der Startseite nicht abgesendet. Dann zurück und neu starten.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==== UI / Status ====
+    const st = document.getElementById("st");
+    function warn(msg){ st.className="status warn"; st.textContent = msg; }
+    function ok(msg){ st.className="status ok"; st.textContent = msg; }
+
+    // ==== Load request from localStorage ====
+    let req = null;
+    try { req = JSON.parse(localStorage.getItem("endmysub_request") || "null"); } catch(_){}
+
+    const set = (id, v) => document.getElementById(id).textContent = v || "—";
+    set("v_service", req?.service);
+    set("v_country", req?.country);
+    set("v_email", req?.email);
+
+    // ==== PayPal Hosted Buttons render ====
+    const hostedButtonId = "JCPCE6E7PCW4W";
+    const containerSel = "#paypal-container-JCPCE6E7PCW4W";
+
+    function renderPaypal(){
+      if (!window.paypal || !paypal.HostedButtons){
+        warn("PayPal lädt noch…");
+        return false;
+      }
+      try{
+        paypal.HostedButtons({
+          hostedButtonId,
+
+          // NOTE:
+          // Nicht jeder Hosted-Buttons-Modus feuert Callbacks. Wenn PayPal diese Callbacks ignoriert,
+          // gibt es KEIN Redirect -> dann musst du auf normale Buttons (components=buttons) wechseln.
+          onApprove: (data) => {
+            // Speichern für success.html / Admin-Abgleich
+            localStorage.setItem("ems_paypal_order_id", data?.orderID || "");
+            localStorage.setItem("ems_paypal_payer_id", data?.payerID || "");
+            window.location.href = "success.html";
+          },
+          onCancel: () => warn("Zahlung abgebrochen."),
+          onError: (err) => warn("PayPal Fehler: " + String(err?.message || err))
+        }).render(containerSel);
+
+        ok("Bereit.");
+        return true;
+      }catch(e){
+        warn("PayPal Fehler: " + String(e?.message || e));
+        return false;
+      }
+    }
+
+    // sofort versuchen + kurz nachladen
+    if (!renderPaypal()){
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        if (renderPaypal() || tries >= 25) clearInterval(t);
+        if (tries >= 25) warn("PayPal konnte nicht geladen werden. Seite neu laden.");
+      }, 200);
+    }
+  </script>
+</body>
+</html>

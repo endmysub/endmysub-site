@@ -1,0 +1,70 @@
+<!-- impressum.html (FULL) -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Impressum</title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
+      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;border-bottom:1px solid var(--line);
+      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+    }
+    .brand{display:flex;align-items:flex-start}
+    .brand__logo{width:720px;height:230px;object-fit:contain;display:block}
+    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px;flex-wrap:wrap;justify-content:flex-end}
+    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted);border:1px solid transparent;font-weight:650}
+    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+    .card{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);border-radius:32px;padding:26px;box-shadow:var(--shadow)}
+    h1{margin:0 0 10px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+    p,li{margin:0 0 12px;color:var(--muted);line-height:1.65}
+    ul{margin:0;padding-left:18px}
+    .hint{color:rgba(231,236,255,.92);font-size:14px}
+    @media (max-width:980px){.brand__logo{width:320px;height:90px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="endmysub home">
+      <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
+    </a>
+    <nav class="topbar__nav">
+      <a class="navlink" href="index.html">Start</a>
+      <a class="navlink navlink--active" href="impressum.html">Impressum</a>
+      <a class="navlink" href="contact.html">Kontakt</a>
+      <a class="navlink" href="review.html">Review</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1>Impressum</h1>
+      <p class="hint">Platzhalter. Trage hier deine rechtlichen Angaben ein.</p>
+      <ul>
+        <li>Firmenname / Betreiber: EndMySub</li>
+        <li>Anschrift: Sampaguita Street, Antipolo City, Rizal 1870, Philippinen</li>
+        <li>E-Mail: info@endmysub.com</li>
+        <li>Vertretungsberechtigt: Mylette D. Acaya (Geschäftsführerin)</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

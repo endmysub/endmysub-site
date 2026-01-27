@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Nutzungsbedingungen</title>
+
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
+      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;border-bottom:1px solid var(--line);
+      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+    }
+    .brand{display:flex;align-items:flex-start}
+    .brand__logo{width:720px;height:230px;object-fit:contain;display:block}
+
+    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px;flex-wrap:wrap}
+    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted);border:1px solid transparent;font-weight:650}
+    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+
+    .topbar__controls{display:flex;gap:10px;align-items:center;padding-top:6px}
+    .control{display:flex;gap:8px;align-items:center}
+    .control__label{font-size:12px;color:var(--muted)}
+    .control__select{height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text);padding:0 10px}
+
+    .card{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      border-radius:32px;
+      padding:26px;
+      box-shadow:var(--shadow);
+    }
+    .page-title{margin:6px 0 12px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+    .page-sub{margin:0 0 22px;color:var(--muted);line-height:1.65;max-width:90ch}
+
+    .doc h2{margin:22px 0 10px;font-size:18px}
+    .doc p{margin:0 0 12px;color:rgba(231,236,255,.92);line-height:1.7}
+    .doc ul{margin:0 0 12px 18px;color:rgba(231,236,255,.92);line-height:1.7}
+    .small{color:var(--muted);font-size:12px;line-height:1.45;margin-top:16px;border-top:1px solid rgba(255,255,255,.10);padding-top:14px}
+
+    @media (max-width:980px){
+      .brand__logo{width:320px;height:90px}
+      .topbar{flex-wrap:wrap;gap:10px}
+      .topbar__controls{width:100%;justify-content:flex-end}
+    }
+  </style>
+
+  <script>
+    (() => {
+      const germanCountries = new Set(["DE","AT","CH"]);
+      const defaultCountry = "DE";
+
+      const dict = {
+        en: {
+          nav_review:"Review",
+          nav_tos:"Terms",
+          nav_privacy:"Privacy",
+          nav_contact:"Contact",
+          country_label:"Country",
+          lang_label:"Language",
+          title:"Terms and Conditions",
+          sub:"Terms for using endmysub.",
+          s1:"1. Scope",
+          s1p1:"These terms govern the use of the endmysub website and the services offered on it.",
+          s2:"2. Service description",
+          s2p1:"endmysub provides support in preparing and submitting cancellation requests to third-party providers based on the information you enter. We are not affiliated with those providers.",
+          s2p2:"You are responsible for providing correct and complete information. We cannot guarantee that a provider will accept or process a cancellation in a specific time.",
+          s3:"3. Reviews",
+          s3p1:"You can submit a review about your experience with our service. Reviews must be truthful and must not contain illegal content, personal data of third parties, or abusive language.",
+          s4:"4. Fees and payment",
+          s4p1:"If fees are displayed on the site, they apply as shown during checkout. Payment methods are shown on the payment page.",
+          s5:"5. User obligations",
+          s5p1:"You may not misuse the site, attempt to disrupt it, or use it for unlawful purposes.",
+          s6:"6. Liability",
+          s6p1:"We are not liable for third-party actions (providers, banks, payment services). Liability is limited to intent and gross negligence where legally permitted.",
+          s7:"7. Changes",
+          s7p1:"We may update these terms to reflect changes in the service. The current version is published on this page.",
+          s8:"8. Contact",
+          s8p1:"Contact details are available on the Contact page.",
+          date_prefix:"Updated:"
+        },
+        de: {
+          nav_review:"Review",
+          nav_tos:"Nutzungsbedingungen",
+          nav_privacy:"Datenschutz",
+          nav_contact:"Kontakt",
+          country_label:"Land",
+          lang_label:"Sprache",
+          title:"Nutzungsbedingungen",
+          sub:"Bedingungen für die Nutzung von endmysub.",
+          s1:"1. Geltungsbereich",
+          s1p1:"Diese Nutzungsbedingungen regeln die Nutzung der Website endmysub sowie der darauf angebotenen Leistungen.",
+          s2:"2. Leistungsbeschreibung",
+          s2p1:"endmysub unterstützt bei der Vorbereitung und Übermittlung von Kündigungsanfragen an Drittanbieter auf Basis der von Ihnen eingegebenen Informationen. Wir sind nicht mit diesen Anbietern verbunden.",
+          s2p2:"Sie sind dafür verantwortlich, richtige und vollständige Angaben zu machen. Wir können nicht garantieren, dass ein Anbieter eine Kündigung in einem bestimmten Zeitraum akzeptiert oder verarbeitet.",
+          s3:"3. Bewertungen",
+          s3p1:"Sie können eine Bewertung zu Ihrer Erfahrung mit unserem Service abgeben. Bewertungen müssen wahrheitsgemäß sein und dürfen keine rechtswidrigen Inhalte, keine personenbezogenen Daten Dritter und keine beleidigende Sprache enthalten.",
+          s4:"4. Entgelte und Zahlung",
+          s4p1:"Sofern Entgelte auf der Website ausgewiesen sind, gelten diese wie im Bezahlvorgang dargestellt. Die verfügbaren Zahlungsmethoden werden auf der Zahlungsseite angezeigt.",
+          s5:"5. Pflichten der Nutzer",
+          s5p1:"Eine missbräuchliche Nutzung der Website, Störungen der Systeme oder eine Nutzung zu rechtswidrigen Zwecken ist untersagt.",
+          s6:"6. Haftung",
+          s6p1:"Für Handlungen Dritter (Anbieter, Banken, Zahlungsdienstleister) übernehmen wir keine Haftung. Soweit gesetzlich zulässig, ist die Haftung auf Vorsatz und grobe Fahrlässigkeit beschränkt.",
+          s7:"7. Änderungen",
+          s7p1:"Wir können diese Bedingungen anpassen, um Änderungen des Services abzubilden. Die jeweils aktuelle Version ist auf dieser Seite veröffentlicht.",
+          s8:"8. Kontakt",
+          s8p1:"Kontaktinformationen finden Sie auf der Kontakt-Seite.",
+          date_prefix:"Stand:"
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function applyLang(lang){
+        const map = dict[lang] || dict.en;
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-i18n]").forEach(el=>{
+          const k = el.getAttribute("data-i18n");
+          if (map[k] !== undefined) el.textContent = map[k];
+        });
+      }
+
+      function enforceAutoLanguage(countryCode){
+        const langSelect = $("langSelect");
+        if (!langSelect) return;
+        const targetLang = germanCountries.has(countryCode) ? "de" : "en";
+        langSelect.value = targetLang;
+        localStorage.setItem("ems_lang", targetLang);
+        applyLang(targetLang);
+        setToday(targetLang);
+      }
+
+      function setToday(lang){
+        const el = $("today");
+        if (!el) return;
+        el.textContent = new Date().toLocaleDateString(lang === "en" ? "en-US" : "de-DE");
+      }
+
+      function init(){
+        const countrySelect = $("countrySelect");
+        const langSelect = $("langSelect");
+
+        const savedCountry = localStorage.getItem("ems_country") || defaultCountry;
+        const savedLang = localStorage.getItem("ems_lang");
+
+        if (countrySelect) countrySelect.value = savedCountry;
+
+        if (countrySelect){
+          countrySelect.addEventListener("change", e=>{
+            const c = e.target.value;
+            localStorage.setItem("ems_country", c);
+            enforceAutoLanguage(c);
+          });
+        }
+
+        if (langSelect){
+          langSelect.addEventListener("change", e=>{
+            const lang = e.target.value;
+            localStorage.setItem("ems_lang", lang);
+            applyLang(lang);
+            setToday(lang);
+          });
+        }
+
+        if (savedLang){
+          langSelect.value = savedLang;
+          applyLang(savedLang);
+          setToday(savedLang);
+        } else {
+          enforceAutoLanguage(savedCountry);
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</head>
+
+<body>
+  <header class="topbar">
+    <!-- LOGO KLICK -> HAUPTSEITE -->
+    <!-- Wenn deine Hauptseite "index.html" heißt, nutze ./index.html -->
+    <!-- Wenn sie ohne Endung läuft, nutze ./index -->
+    <a class="brand" href="./index.html" aria-label="endmysub home">
+      <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
+    </a>
+
+    <nav class="topbar__nav">
+      <a class="navlink" href="./Payment.html" data-i18n="nav_review">Review</a>
+      <a class="navlink navlink--active" href="./ToS.html" data-i18n="nav_tos">Nutzungsbedingungen</a>
+      <a class="navlink" href="./privacy.html" data-i18n="nav_privacy">Datenschutz</a>
+      <a class="navlink" href="./contact.html" data-i18n="nav_contact">Kontakt</a>
+    </nav>
+
+    <div class="topbar__controls">
+      <label class="control">
+        <span class="control__label" data-i18n="country_label">Land</span>
+        <select id="countrySelect" class="control__select" aria-label="Country">
+          <option value="US">USA</option>
+          <option value="EU">Europe</option>
+          <option value="AT">Österreich</option>
+          <option value="DE">Deutschland</option>
+          <option value="CH">Schweiz</option>
+        </select>
+      </label>
+
+      <label class="control">
+        <span class="control__label" data-i18n="lang_label">Sprache</span>
+        <select id="langSelect" class="control__select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card doc">
+      <h1 class="page-title" data-i18n="title">Nutzungsbedingungen</h1>
+      <p class="page-sub" data-i18n="sub">Bedingungen für die Nutzung von endmysub.</p>
+
+      <h2 data-i18n="s1">1. Geltungsbereich</h2>
+      <p data-i18n="s1p1">Diese Nutzungsbedingungen regeln die Nutzung der Website endmysub sowie der darauf angebotenen Leistungen.</p>
+
+      <h2 data-i18n="s2">2. Leistungsbeschreibung</h2>
+      <p data-i18n="s2p1">endmysub unterstützt bei der Vorbereitung und Übermittlung von Kündigungsanfragen an Drittanbieter auf Basis der von Ihnen eingegebenen Informationen. Wir sind nicht mit diesen Anbietern verbunden.</p>
+      <p data-i18n="s2p2">Sie sind dafür verantwortlich, richtige und vollständige Angaben zu machen. Wir können nicht garantieren, dass ein Anbieter eine Kündigung in einem bestimmten Zeitraum akzeptiert oder verarbeitet.</p>
+
+      <h2 data-i18n="s3">3. Bewertungen</h2>
+      <p data-i18n="s3p1">Sie können eine Bewertung zu Ihrer Erfahrung mit unserem Service abgeben. Bewertungen müssen wahrheitsgemäß sein und dürfen keine rechtswidrigen Inhalte, keine personenbezogenen Daten Dritter und keine beleidigende Sprache enthalten.</p>
+
+      <h2 data-i18n="s4">4. Entgelte und Zahlung</h2>
+      <p data-i18n="s4p1">Sofern Entgelte auf der Website ausgewiesen sind, gelten diese wie im Bezahlvorgang dargestellt. Die verfügbaren Zahlungsmethoden werden auf der Zahlungsseite angezeigt.</p>
+
+      <h2 data-i18n="s5">5. Pflichten der Nutzer</h2>
+      <p data-i18n="s5p1">Eine missbräuchliche Nutzung der Website, Störungen der Systeme oder eine Nutzung zu rechtswidrigen Zwecken ist untersagt.</p>
+
+      <h2 data-i18n="s6">6. Haftung</h2>
+      <p data-i18n="s6p1">Für Handlungen Dritter (Anbieter, Banken, Zahlungsdienstleister) übernehmen wir keine Haftung. Soweit gesetzlich zulässig, ist die Haftung auf Vorsatz und grobe Fahrlässigkeit beschränkt.</p>
+
+      <h2 data-i18n="s7">7. Änderungen</h2>
+      <p data-i18n="s7p1">Wir können diese Bedingungen anpassen, um Änderungen des Services abzubilden. Die jeweils aktuelle Version ist auf dieser Seite veröffentlicht.</p>
+
+      <h2 data-i18n="s8">8. Kontakt</h2>
+      <p data-i18n="s8p1">Kontaktinformationen finden Sie auf der Kontakt-Seite.</p>
+
+      <div class="small">
+        <span data-i18n="date_prefix">Stand:</span> <span id="today"></span>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

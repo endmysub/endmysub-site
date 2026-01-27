@@ -1,0 +1,70 @@
+<!-- about.html (FULL) -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — About</title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
+      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;border-bottom:1px solid var(--line);
+      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+    }
+    .brand{display:flex;align-items:flex-start}
+    .brand__logo{width:720px;height:230px;object-fit:contain;display:block}
+    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px;flex-wrap:wrap;justify-content:flex-end}
+    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted);border:1px solid transparent;font-weight:650}
+    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+    .card{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);border-radius:32px;padding:26px;box-shadow:var(--shadow)}
+    h1{margin:0 0 10px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+    p{margin:0 0 12px;color:var(--muted);line-height:1.65}
+    .lead{color:rgba(231,236,255,.92)}
+    @media (max-width:980px){.brand__logo{width:320px;height:90px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="endmysub home">
+      <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
+    </a>
+    <nav class="topbar__nav">
+      <a class="navlink" href="index.html">Start</a>
+      <a class="navlink" href="impressum.html">Impressum</a>
+      <a class="navlink" href="contact.html">Kontakt</a>
+      <a class="navlink" href="Payment.html">Review</a>
+      <a class="navlink navlink--active" href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1>Warum endmysub?</h1>
+      <p class="lead">endmysub wurde gegründet, weil Kündigen für viele Menschen unnötig schwer ist.</p>
+
+      <p>Viele Dienste machen das Beenden unnötig umständlich: Der Kündigungsweg ist schwer zu finden, man wird durch mehrere Schritte geführt, und am Ende ist oft nicht ganz klar, ob alles wirklich abgeschlossen ist. Genau da verlieren viele den Überblick – und zahlen länger, als sie eigentlich wollten.</p>
+
+      <p>Mit endmysub machen wir den Prozess einfach: Du gibst deine Daten ein, wir übernehmen die Kündigung und du bekommst die Bestätigung. Klar, nachvollziehbar, ohne Hin-und-her.</p>
+
+      <p>Wichtig: Wir arbeiten ohne lästige monatliche Monatsgebühren. Unsere Review-Seite ist kostenfrei: Dort können Sie Unternehmen bewerten und Ihre Erfahrungen sichtbar machen, damit Ihre Stimme gehört wird.</p>
+    </section>
+  </main>
+</body>
+</html>

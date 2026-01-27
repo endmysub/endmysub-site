@@ -1,0 +1,165 @@
+<!-- contact.html (FULL) -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Kontakt</title>
+
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
+      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;border-bottom:1px solid var(--line);
+      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+    }
+    .brand{display:flex;align-items:flex-start}
+    .brand__logo{width:720px;height:230px;object-fit:contain;display:block}
+    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px;flex-wrap:wrap;justify-content:flex-end}
+    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted);border:1px solid transparent;font-weight:650}
+    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+
+    .card{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);border-radius:32px;padding:26px;box-shadow:var(--shadow)}
+    h1{margin:0 0 10px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+    p{margin:0 0 12px;color:var(--muted);line-height:1.65}
+
+    .grid{display:grid;gap:12px;margin-top:14px;max-width:720px}
+    .label{font-size:13px;color:var(--muted);font-weight:800}
+    .input{
+      height:50px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);color:var(--text);padding:0 14px;outline:none
+    }
+    textarea.input{height:160px;padding:12px 14px;resize:vertical}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:54px;padding:0 18px;border-radius:18px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);color:var(--text);font-weight:900;font-size:15px;cursor:pointer;width:220px
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .status{margin-top:12px;font-size:13px;line-height:1.45}
+    .ok{color:#c6ffe9}
+    .warn{color:#ffd3b0}
+
+    @media (max-width:980px){.brand__logo{width:320px;height:90px}}
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="endmysub home">
+      <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
+    </a>
+    <nav class="topbar__nav">
+      <a class="navlink" href="index.html">Start</a>
+      <a class="navlink" href="impressum.html">Impressum</a>
+      <a class="navlink navlink--active" href="contact.html">Kontakt</a>
+      <a class="navlink" href="Payment.html">Review</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1>Kontakt</h1>
+      <p>Schreiben Sie uns. Ihre Nachricht wird gespeichert und wir melden uns per E-Mail.</p>
+
+      <form class="grid" onsubmit="return false;">
+        <div>
+          <div class="label">Name</div>
+          <input id="c_name" class="input" type="text" autocomplete="name" />
+        </div>
+        <div>
+          <div class="label">E-Mail</div>
+          <input id="c_email" class="input" type="email" autocomplete="email" />
+        </div>
+        <div>
+          <div class="label">Nachricht</div>
+          <textarea id="c_msg" class="input" autocomplete="off"></textarea>
+        </div>
+
+        <button id="btnSend" class="btn" type="button">Senden</button>
+        <div class="status" id="st"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Supabase (Project Ref = babacmszcumkgzyzidnh)
+    const SUPABASE_URL  = "https://babacmszcumkgzyzidnh.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYmFjbXN6Y3Vta2d6eXppZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDU4NTAsImV4cCI6MjA4NDM4MTg1MH0.rRhi17MQIlE-5iJQDSYu9CENxvaHhbFyHhSct_x-QaY";
+
+    // Tabelle mit Spalten: name, email, message, status
+    const CONTACT_TABLE = "contact_messages"; // <- falls anders: NUR diesen Namen ändern
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+      auth: { persistSession:false, autoRefreshToken:false, detectSessionInUrl:false }
+    });
+
+    const st = document.getElementById("st");
+    const btn = document.getElementById("btnSend");
+
+    function ok(msg){ st.className="status ok"; st.textContent=msg; }
+    function warn(msg){ st.className="status warn"; st.textContent=msg; }
+
+    btn.addEventListener("click", async () => {
+      const name = (document.getElementById("c_name").value || "").trim();
+      const email = (document.getElementById("c_email").value || "").trim();
+      const message = (document.getElementById("c_msg").value || "").trim();
+
+      if (!name || !email || !message) { warn("Bitte alle Felder ausfüllen."); return; }
+
+      btn.disabled = true;
+      ok("Senden...");
+
+      // 1) In Supabase speichern
+      const { error: dbErr } = await sb
+        .from(CONTACT_TABLE)
+        .insert({ name, email, message, status: "new" });
+
+      if (dbErr) { btn.disabled=false; warn("Supabase: " + dbErr.message); return; }
+
+      // 2) E-Mail via Edge Function (Resend)
+      const fnUrl = `${SUPABASE_URL}/functions/v1/resend-email`;
+
+const r = await fetch(fnUrl, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${SUPABASE_ANON}`,
+    "apikey": SUPABASE_ANON
+  },
+  body: JSON.stringify({ name, email, message })
+});
+
+
+      if (!r.ok) {
+        const t = await r.text();
+        btn.disabled=false;
+        warn("E-Mail Fehler: " + t);
+        return;
+      }
+
+      ok("Gesendet.");
+      document.getElementById("c_msg").value = "";
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

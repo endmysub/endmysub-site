@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Datenschutz</title>
+
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
+      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;border-bottom:1px solid var(--line);
+      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+    }
+    .brand{display:flex;align-items:flex-start}
+    .brand__logo{width:520px;height:130px;object-fit:contain;display:block}
+
+    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px;flex-wrap:wrap}
+    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted);border:1px solid transparent;font-weight:650}
+    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+
+    .topbar__controls{display:flex;gap:10px;align-items:center;padding-top:6px}
+    .control{display:flex;gap:8px;align-items:center}
+    .control__label{font-size:12px;color:var(--muted)}
+    .control__select{height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text);padding:0 10px}
+
+    .card{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      border-radius:32px;
+      padding:26px;
+      box-shadow:var(--shadow);
+    }
+    .page-title{margin:6px 0 12px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+    .page-sub{margin:0 0 22px;color:var(--muted);line-height:1.65;max-width:90ch}
+
+    .doc h2{margin:22px 0 10px;font-size:18px}
+    .doc p{margin:0 0 12px;color:rgba(231,236,255,.92);line-height:1.7}
+    .doc ul{margin:0 0 12px 18px;color:rgba(231,236,255,.92);line-height:1.7}
+    .small{color:var(--muted);font-size:12px;line-height:1.45;margin-top:16px;border-top:1px solid rgba(255,255,255,.10);padding-top:14px}
+
+    /* Bullet rendering for i18n blocks */
+    .bullets{margin:10px 0 12px 18px; padding:0}
+    .bullets li{margin:6px 0; color:rgba(231,236,255,.92)}
+    .bullets li::marker{color:rgba(110,231,183,.85)}
+
+    @media (max-width:980px){
+      .brand__logo{width:320px;height:90px}
+      .topbar{flex-wrap:wrap;gap:10px}
+      .topbar__controls{width:100%;justify-content:flex-end}
+    }
+  </style>
+
+  <script>
+    (() => {
+      const germanCountries = new Set(["DE","AT","CH"]);
+      const defaultCountry = "DE";
+
+      const dict = {
+        en: {
+          nav_review:"Review",
+          nav_tos:"Terms",
+          nav_privacy:"Privacy",
+          nav_contact:"Contact",
+          country_label:"Country",
+          lang_label:"Language",
+
+          title:"Privacy Policy",
+          sub:"How endmysub processes data.",
+
+          s1:"1. Controller",
+          s1p1:
+            "The controller responsible for data processing on this website is the endmysub team\n" +
+            "• Sampaguita Street\n" +
+            "• Antipolo City\n" +
+            "• Rizal 1870\n" +
+            "• Philippines\n" +
+            "• Email: info@endmysub.com",
+
+          s2:"2. Data we process",
+          s2p1:"We process data you enter in forms (e.g., provider name, account identifiers, cancellation request text), plus technical data required to operate the website.",
+          s2p2:"If you contact us, we process the information you provide in your message.",
+
+          s3:"3. Purpose of processing",
+          s3p1:"To prepare and submit your cancellation request, communicate with you, improve our service, and ensure website security.",
+
+          s4:"4. Legal basis",
+          s4p1:"Depending on the case, processing is based on contract performance, your consent, and/or legitimate interests (e.g., security).",
+
+          s5:"5. Sharing with third parties",
+          s5p1:"We may transmit the information required for the cancellation request to the provider you name, or to service providers (hosting, email, payment) as needed.",
+
+          s6:"6. Storage period",
+          s6p1:"We store data only as long as necessary for the stated purposes or legal obligations.",
+
+          s7:"7. Your rights",
+          s7p1:"You may have rights to access, rectification, deletion, restriction, portability, and objection. You can also withdraw consent at any time where applicable.",
+
+          s8:"8. Security",
+          s8p1:"We use appropriate technical and organizational measures to protect your data.",
+
+          s9:"9. Changes",
+          s9p1:"We may update this policy. The current version is published on this page.",
+
+          date_prefix:"Updated:"
+        },
+        de: {
+          nav_review:"Review",
+          nav_tos:"Nutzungsbedingungen",
+          nav_privacy:"Datenschutz",
+          nav_contact:"Kontakt",
+          country_label:"Land",
+          lang_label:"Sprache",
+
+          title:"Datenschutz",
+          sub:"Informationen zur Datenverarbeitung bei endmysub.",
+
+          s1:"1. Verantwortlicher",
+          s1p1:
+            "Verantwortlich für die Datenverarbeitung auf dieser Website ist das Team endmysub\n" +
+            "• Sampaguita Street\n" +
+            "• Antipolo City\n" +
+            "• Rizal 1870\n" +
+            "• Philippinen\n" +
+            "• E-Mail: info@endmysub.com",
+
+          s2:"2. Welche Daten wir verarbeiten",
+          s2p1:"Wir verarbeiten Daten, die Sie in Formularen eingeben (z. B. Anbietername, Kontodaten/Identifikatoren, Kündigungstext), sowie technische Daten, die für den Betrieb der Website erforderlich sind.",
+          s2p2:"Wenn Sie uns kontaktieren, verarbeiten wir die Angaben aus Ihrer Nachricht.",
+
+          s3:"3. Zwecke der Verarbeitung",
+          s3p1:"Zur Vorbereitung und Übermittlung Ihrer Kündigungsanfrage, zur Kommunikation mit Ihnen, zur Verbesserung unseres Services sowie zur Sicherstellung der Website-Sicherheit.",
+
+          s4:"4. Rechtsgrundlagen",
+          s4p1:"Je nach Fall erfolgt die Verarbeitung zur Vertragserfüllung, auf Grundlage Ihrer Einwilligung und/oder aufgrund berechtigter Interessen (z. B. Sicherheit).",
+
+          s5:"5. Weitergabe an Dritte",
+          s5p1:"Wir können die für die Kündigung erforderlichen Informationen an den von Ihnen benannten Anbieter übermitteln oder an Dienstleister (Hosting, E-Mail, Zahlung) weitergeben, soweit dies erforderlich ist.",
+
+          s6:"6. Speicherdauer",
+          s6p1:"Wir speichern Daten nur so lange, wie es für die genannten Zwecke oder gesetzliche Pflichten erforderlich ist.",
+
+          s7:"7. Ihre Rechte",
+          s7p1:"Sie haben ggf. Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch. Eine erteilte Einwilligung können Sie jederzeit mit Wirkung für die Zukunft widerrufen.",
+
+          s8:"8. Sicherheit",
+          s8p1:"Wir setzen geeignete technische und organisatorische Maßnahmen ein, um Ihre Daten zu schützen.",
+
+          s9:"9. Änderungen",
+          s9p1:"Wir können diese Datenschutzhinweise anpassen. Die aktuelle Version ist auf dieser Seite veröffentlicht.",
+
+          date_prefix:"Stand:"
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function escapeHtml(s){
+        return String(s ?? "")
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
+      }
+
+      function bulletsToHtml(text){
+        const lines = String(text || "")
+          .split("\n")
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        if (!lines.length) return "";
+
+        const first = lines.shift();
+        const items = lines
+          .map(l => l.replace(/^•\s?/, ""))
+          .map(l => `<li>${escapeHtml(l)}</li>`)
+          .join("");
+
+        return `<p>${escapeHtml(first)}</p><ul class="bullets">${items}</ul>`;
+      }
+
+      function applyLang(lang){
+        const map = dict[lang] || dict.en;
+        document.documentElement.lang = lang;
+
+        document.querySelectorAll("[data-i18n]").forEach(el=>{
+          const k = el.getAttribute("data-i18n");
+          if (map[k] === undefined) return;
+
+          const fmt = el.getAttribute("data-i18n-format");
+          if (fmt === "bullets"){
+            el.innerHTML = bulletsToHtml(map[k]);
+          } else {
+            el.textContent = map[k];
+          }
+        });
+      }
+
+      function enforceAutoLanguage(countryCode){
+        const langSelect = $("langSelect");
+        if (!langSelect) return;
+        const targetLang = germanCountries.has(countryCode) ? "de" : "en";
+        langSelect.value = targetLang;
+        localStorage.setItem("ems_lang", targetLang);
+        applyLang(targetLang);
+        setToday(targetLang);
+      }
+
+      function setToday(lang){
+        const el = $("today");
+        if (!el) return;
+        el.textContent = new Date().toLocaleDateString(lang === "en" ? "en-US" : "de-DE");
+      }
+
+      function init(){
+        const countrySelect = $("countrySelect");
+        const langSelect = $("langSelect");
+
+        const savedCountry = localStorage.getItem("ems_country") || defaultCountry;
+        const savedLang = localStorage.getItem("ems_lang");
+
+        if (countrySelect) countrySelect.value = savedCountry;
+
+        if (countrySelect){
+          countrySelect.addEventListener("change", e=>{
+            const c = e.target.value;
+            localStorage.setItem("ems_country", c);
+            enforceAutoLanguage(c);
+          });
+        }
+
+        if (langSelect){
+          langSelect.addEventListener("change", e=>{
+            const lang = e.target.value;
+            localStorage.setItem("ems_lang", lang);
+            applyLang(lang);
+            setToday(lang);
+          });
+        }
+
+        if (savedLang){
+          if (langSelect) langSelect.value = savedLang;
+          applyLang(savedLang);
+          setToday(savedLang);
+        } else {
+          enforceAutoLanguage(savedCountry);
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html" aria-label="endmysub home">
+      <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
+    </a>
+
+    <nav class="topbar__nav">
+      <a class="navlink" href="./review.html" data-i18n="nav_review">Review</a>
+      <a class="navlink" href="./ToS.html" data-i18n="nav_tos">Nutzungsbedingungen</a>
+      <a class="navlink navlink--active" href="./privacy.html" data-i18n="nav_privacy">Datenschutz</a>
+      <a class="navlink" href="./contact.html" data-i18n="nav_contact">Kontakt</a>
+    </nav>
+
+    <div class="topbar__controls">
+      <label class="control">
+        <span class="control__label" data-i18n="country_label">Land</span>
+        <select id="countrySelect" class="control__select" aria-label="Country">
+          <option value="US">USA</option>
+          <option value="EU">Europe</option>
+          <option value="AT">Österreich</option>
+          <option value="DE">Deutschland</option>
+          <option value="CH">Schweiz</option>
+        </select>
+      </label>
+
+      <label class="control">
+        <span class="control__label" data-i18n="lang_label">Sprache</span>
+        <select id="langSelect" class="control__select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card doc">
+      <h1 class="page-title" data-i18n="title">Datenschutz</h1>
+      <p class="page-sub" data-i18n="sub">Informationen zur Datenverarbeitung bei endmysub.</p>
+
+      <h2 data-i18n="s1">1. Verantwortlicher</h2>
+      <!-- bullets render here -->
+      <div data-i18n="s1p1" data-i18n-format="bullets"></div>
+
+      <h2 data-i18n="s2">2. Welche Daten wir verarbeiten</h2>
+      <p data-i18n="s2p1">Wir verarbeiten Daten, die Sie in Formularen eingeben (z. B. Anbietername, Kontodaten/Identifikatoren, Kündigungstext), sowie technische Daten, die für den Betrieb der Website erforderlich sind.</p>
+      <p data-i18n="s2p2">Wenn Sie uns kontaktieren, verarbeiten wir die Angaben aus Ihrer Nachricht.</p>
+
+      <h2 data-i18n="s3">3. Zwecke der Verarbeitung</h2>
+      <p data-i18n="s3p1">Zur Vorbereitung und Übermittlung Ihrer Kündigungsanfrage, zur Kommunikation mit Ihnen, zur Verbesserung unseres Services sowie zur Sicherstellung der Website-Sicherheit.</p>
+
+      <h2 data-i18n="s4">4. Rechtsgrundlagen</h2>
+      <p data-i18n="s4p1">Je nach Fall erfolgt die Verarbeitung zur Vertragserfüllung, auf Grundlage Ihrer Einwilligung und/oder aufgrund berechtigter Interessen (z. B. Sicherheit).</p>
+
+      <h2 data-i18n="s5">5. Weitergabe an Dritte</h2>
+      <p data-i18n="s5p1">Wir können die für die Kündigung erforderlichen Informationen an den von Ihnen benannten Anbieter übermitteln oder an Dienstleister (Hosting, E-Mail, Zahlung) weitergeben, soweit dies erforderlich ist.</p>
+
+      <h2 data-i18n="s6">6. Speicherdauer</h2>
+      <p data-i18n="s6p1">Wir speichern Daten nur so lange, wie es für die genannten Zwecke oder gesetzliche Pflichten erforderlich ist.</p>
+
+      <h2 data-i18n="s7">7. Ihre Rechte</h2>
+      <p data-i18n="s7p1">Sie haben ggf. Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch. Eine erteilte Einwilligung können Sie jederzeit mit Wirkung für die Zukunft widerrufen.</p>
+
+      <h2 data-i18n="s8">8. Sicherheit</h2>
+      <p data-i18n="s8p1">Wir setzen geeignete technische und organisatorische Maßnahmen ein, um Ihre Daten zu schützen.</p>
+
+      <h2 data-i18n="s9">9. Änderungen</h2>
+      <p data-i18n="s9p1">Wir können diese Datenschutzhinweise anpassen. Die aktuelle Version ist auf dieser Seite veröffentlicht.</p>
+
+      <div class="small">
+        <span data-i18n="date_prefix">Stand:</span> <span id="today"></span>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

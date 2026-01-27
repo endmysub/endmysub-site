@@ -1,0 +1,804 @@
+<!-- index.html — endmysub Homepage (FULL) + SUPABASE INSERT
+  Fixes:
+  - "Weiter zur Zahlung" funktioniert immer (Redirect zu payment.html)
+  - Speichert Anfrage in Supabase: public.cancellations (anon insert via RLS)
+  - GitHub Pages kompatibel (case-sensitive)
+-->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>endmysub — Kündigung von Abos als Service</title>
+  <meta name="description" content="Wir übernehmen die Kündigung Ihrer Abos. Fixpreis. Bestätigung inklusive." />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- Supabase (Frontend SDK) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --bg0:#070b14;
+      --bg1:#0b1220;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+
+      --green:#35e08f;
+      --green2:#18b86f;
+
+      --radius:16px;
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --shadow2: 0 10px 24px rgba(0,0,0,.28);
+      --max:1120px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font: 16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(53,224,143,.24), transparent 60%),
+        radial-gradient(900px 520px at 80% 20%, rgba(96,165,250,.18), transparent 62%),
+        radial-gradient(900px 520px at 50% 110%, rgba(255,92,122,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 20px}
+
+    /* Header */
+    .header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,11,20,.78), rgba(7,11,20,.45));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    /* Header nutzt volle Breite (nur im Header) */
+    .header .wrap{
+      max-width: 100%;
+      padding: 0 28px;
+    }
+
+    /* 3-Spalten Layout: Brand | Nav | CTA */
+    .nav{
+      display:grid;
+      grid-template-columns: auto 1fr auto;
+      align-items:center;
+      gap: 18px;
+      min-height: 120px;
+      padding: 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      margin: 0;
+      min-width: auto;
+    }
+
+    .logo{
+      width: 520px;
+      height: 120px;
+      display:block;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));
+    }
+
+    .brand-name{
+      font-weight:900;
+      font-size: 22px;
+      line-height: 1;
+      white-space: nowrap;
+      color: rgba(198,255,233,.95);
+    }
+
+    .navlinks{
+      justify-self: center;
+      display:flex;
+      gap:18px;
+      align-items:center;
+      white-space: nowrap;
+    }
+    .navlinks a{
+      color:var(--muted);
+      font-weight:600;
+      padding:10px 10px;
+      border-radius:10px;
+      transition: .15s ease;
+    }
+    .navlinks a:hover{color:var(--text); background:rgba(255,255,255,.06)}
+
+    .nav-cta{
+      justify-self: end;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap: nowrap;
+    }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      height:44px; padding:0 16px;
+      border-radius:12px;
+      font-weight:800;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      transition: .15s ease;
+      cursor:pointer;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085)}
+    .btn:active{transform: translateY(0px)}
+    .btn.primary{
+      border-color: rgba(53,224,143,.35);
+      background: linear-gradient(135deg, var(--green), #7cf3c2);
+      color:#05210f;
+      box-shadow: 0 18px 40px rgba(53,224,143,.18);
+    }
+    .btn.primary:hover{filter: brightness(1.02)}
+    .btn.ghost{background: transparent}
+    .btn[disabled]{opacity:.55; cursor:not-allowed; transform:none}
+
+    .burger{display:none}
+
+    /* Hero */
+    .hero{padding: 56px 0 18px;}
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .badge-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color:var(--muted);
+      font-weight:700;
+      font-size: 13px;
+    }
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(34px, 4.4vw, 56px);
+      line-height: 1.06;
+      letter-spacing: -.6px;
+    }
+    .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 56ch;
+    }
+    .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin: 18px 0 12px}
+    .micro{color: rgba(255,255,255,.56); font-size: 12.5px; margin-top: 8px;}
+
+    .hero-card{
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-card .hd{
+      padding: 16px 16px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+    }
+    .price{font-size: 22px; font-weight: 900;}
+    .price small{
+      font-size: 12px; color: rgba(255,255,255,.62); font-weight: 800;
+      margin-left: 6px;
+    }
+    .hero-card .bd{padding: 16px}
+    .field{display:flex; flex-direction:column; gap:7px; margin-bottom: 12px}
+    label{color: rgba(255,255,255,.72); font-weight:800; font-size: 12px}
+    input,select{
+      height: 44px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      padding: 0 12px;
+      outline:none;
+    }
+    input:focus,select:focus{border-color: rgba(53,224,143,.35); box-shadow: 0 0 0 3px rgba(53,224,143,.12)}
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .note{
+      margin-top: 10px;
+      color: rgba(255,255,255,.62);
+      font-size: 12.5px;
+    }
+    .divider{height: 1px; background: rgba(255,255,255,.10); margin: 16px 0;}
+    .minirow{display:flex; gap:10px; align-items:center; color: rgba(255,255,255,.70); font-size: 13px}
+    .dot{width:8px; height:8px; border-radius:99px; background: rgba(53,224,143,.9); box-shadow: 0 0 0 4px rgba(53,224,143,.12)}
+
+    .formStatus{
+      margin-top:10px;
+      font-size:12.5px;
+      font-weight:800;
+      line-height:1.45;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      display:none;
+    }
+    .formStatus.ok{display:block; color:#c6ffe9; border-color: rgba(53,224,143,.25)}
+    .formStatus.err{display:block; color:#ffd3b0; border-color: rgba(255,211,176,.22)}
+
+    /* Sections */
+    section{padding: 44px 0}
+    .section-h{
+      display:flex; justify-content:space-between; align-items:flex-end; gap:18px;
+      margin-bottom: 18px;
+    }
+    .section-h h2{margin:0; font-size: 28px; letter-spacing: -.3px;}
+    .section-h p{margin:0; color: var(--muted); max-width: 70ch}
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .card{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow2);
+      min-height: 150px;
+    }
+    .card h3{margin:0 0 8px; font-size: 16px}
+    .card p{margin:0; color: var(--muted)}
+    .icon{
+      width: 38px; height: 38px; border-radius: 12px;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      margin-bottom: 12px;
+    }
+
+    .steps{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .step{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow2);
+    }
+    .step .n{
+      display:inline-flex; align-items:center; justify-content:center;
+      width: 28px; height: 28px; border-radius: 10px;
+      background: rgba(53,224,143,.14);
+      border:1px solid rgba(53,224,143,.25);
+      color: #bffbe1;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .step h3{margin:0 0 6px; font-size: 16px}
+    .step p{margin:0; color: var(--muted)}
+
+    /* Reviews (homepage section) */
+    .reviews{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .review{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow2);
+    }
+    .stars{display:flex; gap:4px; margin-bottom: 10px}
+    .review p{margin:0 0 12px; color: rgba(255,255,255,.78)}
+    .who{display:flex; justify-content:space-between; color: rgba(255,255,255,.58); font-weight: 800; font-size: 12.5px}
+
+    /* FAQ */
+    .faq{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    details{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      padding: 14px 14px;
+      box-shadow: var(--shadow2);
+    }
+    summary{
+      cursor:pointer;
+      font-weight: 900;
+      color: rgba(255,255,255,.88);
+      list-style:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    details p{margin:10px 0 0; color: var(--muted)}
+
+    /* Footer */
+    footer{
+      padding: 34px 0 46px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+    }
+    .footgrid{
+      display:grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 18px;
+      align-items:start;
+    }
+    .footlinks{display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end}
+    .footlinks a{
+      color: rgba(255,255,255,.62);
+      font-weight: 800;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .footlinks a:hover{color: rgba(255,255,255,.86); background: rgba(255,255,255,.06)}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns: 1fr; gap: 14px}
+      .cards{grid-template-columns: 1fr}
+      .steps{grid-template-columns: 1fr}
+      .reviews{grid-template-columns: 1fr}
+      .faq{grid-template-columns: 1fr}
+
+      .navlinks{display:none}
+      .burger{display:inline-flex}
+
+      .footgrid{grid-template-columns:1fr}
+      .footlinks{justify-content:flex-start}
+
+      .header .wrap{padding: 0 14px;}
+      .nav{min-height: 92px;}
+      .logo{width: 320px; height: 78px;}
+      .brand-name{font-size: 18px;}
+    }
+
+    /* Mobile menu */
+    .mobile{
+      display:none;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(7,11,20,.82);
+    }
+    .mobile a{
+      display:block;
+      padding: 12px 20px;
+      color: rgba(255,255,255,.78);
+      font-weight: 900;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .mobile a:hover{background: rgba(255,255,255,.06); color: rgba(255,255,255,.92)}
+    .mobile.show{display:block}
+
+    .glowline{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(53,224,143,.42), rgba(96,165,250,.28), transparent);
+      margin: 18px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="wrap">
+      <div class="nav">
+        <a class="brand" href="index.html" aria-label="endmysub home">
+          <img class="logo" src="endmysublogo.png" alt="endmysub Logo">
+          <span class="brand-name">endmysub</span>
+        </a>
+
+        <nav class="navlinks" aria-label="Navigation">
+          <a href="#ablauf">Ablauf</a>
+          <a href="#preise">Preise</a>
+          <a href="#bewertungen">Bewertungen</a>
+          <a href="#faq">FAQ</a>
+          <a href="about.html">Warum endmysub?</a>
+        </nav>
+
+        <div class="nav-cta">
+          <button class="btn burger" id="burger" type="button" aria-label="Menü öffnen">Menü</button>
+          <a class="btn ghost" href="#faq">Fragen</a>
+          <a class="btn primary" href="#start">Jetzt starten</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile" id="mobile">
+      <a href="#ablauf">Ablauf</a>
+      <a href="#preise">Preise</a>
+      <a href="#bewertungen">Bewertungen</a>
+      <a href="#faq">FAQ</a>
+      <a href="#start">Jetzt starten</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="wrap">
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="badge-row">
+              <span class="badge">Fixpreis</span>
+              <span class="badge">Kündigung + Bestätigung</span>
+              <span class="badge">Kein Abo</span>
+            </div>
+
+            <h1>Kündige Abos ohne Stress.</h1>
+            <p class="sub">
+              Du gibst die Daten an. Wir übernehmen die Kündigung und senden dir die Bestätigung.
+              Klarer Ablauf. Kein Kleingedrucktes.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn primary" href="#start">Jetzt starten</a>
+              <a class="btn" href="#ablauf">So funktioniert’s</a>
+            </div>
+
+            <div class="micro">
+              Hinweis: endmysub ist ein unabhängiger Service und nicht mit den Anbietern der Abos verbunden.
+            </div>
+
+            <div class="glowline"></div>
+          </div>
+
+          <aside class="hero-card" id="start" aria-label="Start Formular">
+            <div class="hd">
+              <div>
+                <div style="font-weight:900; letter-spacing:-.2px;">Anfrage starten</div>
+                <div style="color:rgba(255,255,255,.62); font-size:12.5px; font-weight:800;">Dauer: ~1 Minute</div>
+              </div>
+              <div class="price">22,00&nbsp;€<small>inkl.</small></div>
+            </div>
+
+            <div class="bd">
+              <form id="requestForm" autocomplete="on">
+                <div class="field">
+                  <label for="service">Abo / Anbieter</label>
+                  <input id="service" name="service" placeholder="z. B. Streaming, App, Mitgliedschaft" required />
+                </div>
+
+                <div class="grid2">
+                  <div class="field">
+                    <label for="country">Land</label>
+                    <select id="country" name="country" required>
+                      <option value="" selected disabled>Bitte auswählen</option>
+                      <option value="USA">USA</option>
+                      <option value="Europe">Europe</option>
+                      <option value="Österreich">Österreich</option>
+                      <option value="Deutschland">Deutschland</option>
+                      <option value="Schweiz">Schweiz</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="email">E-Mail</label>
+                    <input id="email" name="email" type="email" placeholder="deine@email.com" required />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="details">Zusatzinfo (optional)</label>
+                  <input id="details" name="details" placeholder="z. B. Nutzername, Rechnungsdatum, Support-Fallnummer" />
+                </div>
+
+                <button class="btn primary" id="btnPay" type="submit" style="width:100%; height:46px;">
+                  Weiter zur Zahlung
+                </button>
+
+                <div class="formStatus" id="payStatus"></div>
+
+                <div class="note">
+                  Nach Zahlung bekommst du eine Bestätigung per E-Mail. Danach starten wir die Kündigung.
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="minirow"><span class="dot"></span> Kündigung durchgeführt</div>
+                <div class="minirow"><span class="dot"></span> Bestätigung an dich</div>
+                <div class="minirow"><span class="dot"></span> Support per E-Mail</div>
+              </form>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="ablauf">
+        <div class="section-h">
+          <div>
+            <h2>Ablauf</h2>
+            <p>Ein klarer Prozess. Kein Hin und Her.</p>
+          </div>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="n">1</div>
+            <h3>Daten eingeben</h3>
+            <p>Du gibst Anbieter, Land und Kontakt an. Optional: Zusatzinfo zur Zuordnung.</p>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <h3>Zahlung</h3>
+            <p>Einmalig 22,00&nbsp;€. Kein Abo. Keine versteckten Gebühren.</p>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <h3>Kündigung</h3>
+            <p>Wir erledigen deinen Auftrag und dokumentieren die Schritte.</p>
+          </div>
+          <div class="step">
+            <div class="n">4</div>
+            <h3>Bestätigung</h3>
+            <p>Du erhältst die Kündigungsbestätigung (oder Status + nächste Schritte).</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="preise">
+        <div class="section-h">
+          <div>
+            <h2>Preise</h2>
+            <p>Ein Tarif. Transparent. Einmalig.</p>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M20 7l-8 10-4-4" stroke="rgba(53,224,143,.92)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>22,00&nbsp;€ Fixpreis</h3>
+            <p>Kündigung + Bestätigung inklusive. Kein Abo.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10z" stroke="rgba(96,165,250,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Unabhängig</h3>
+            <p>Kein Bezug zu den Anbietern. Wir arbeiten in deinem Auftrag.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M12 6v6l4 2" stroke="rgba(255,211,106,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke="rgba(255,211,106,.55)" stroke-width="2"/>
+              </svg>
+            </div>
+            <h3>Sauberer Ablauf</h3>
+            <p>Status-Updates und Nachweis, sobald verfügbar.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="bewertungen">
+        <div class="section-h">
+          <div>
+            <h2>Bewertungen</h2>
+            <p>Echte, interne Bewertungen. Kein externes Portal.</p>
+          </div>
+        </div>
+
+        <div class="reviews">
+          <div class="review">
+            <div class="stars" aria-label="5 Sterne">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+            </div>
+            <p>Sauberer Ablauf, klare Kommunikation, Kündigung kam durch.</p>
+            <div class="who"><span>Verifiziert</span><span>DE</span></div>
+          </div>
+
+          <div class="review">
+            <div class="stars" aria-label="5 Sterne">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+            </div>
+            <p>Endlich weg mit dem Abo. Kein Theater, einfach erledigt.</p>
+            <div class="who"><span>Verifiziert</span><span>AT</span></div>
+          </div>
+
+          <div class="review">
+            <div class="stars" aria-label="4 Sterne">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(255,255,255,.16)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+            </div>
+            <p>Support war schnell. Bestätigung kam einen Tag später.</p>
+            <div class="who"><span>Verifiziert</span><span>CH</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq">
+        <div class="section-h">
+          <div>
+            <h2>FAQ</h2>
+            <p>Kurze Antworten. Ohne Ausreden.</p>
+          </div>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>Ist das ein Abo?</summary>
+            <p>Nein. Einmalige Zahlung pro Auftrag.</p>
+          </details>
+          <details>
+            <summary>Wie lange dauert das?</summary>
+            <p>Je nach Anbieter. Du erhältst Status-Updates und die Bestätigung, sobald verfügbar.</p>
+          </details>
+          <details>
+            <summary>Welche Daten braucht ihr?</summary>
+            <p>Mindestens Anbieter, Land und deine E-Mail. Optional: Zusatzinfo zur schnelleren Zuordnung.</p>
+          </details>
+          <details>
+            <summary>Seid ihr der Anbieter?</summary>
+            <p>Nein. endmysub ist ein unabhängiger Service und nicht mit den Anbietern verbunden.</p>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footgrid">
+        <div>
+          <div style="font-weight:900; margin-bottom:8px;">endmysub</div>
+          <div style="color:rgba(255,255,255,.62); max-width:75ch;">
+            Unabhängiger Kündigungsservice. Keine Rechtsberatung. Keine Verbindung zu den Anbietern.
+          </div>
+          <div style="margin-top:14px; color:rgba(255,255,255,.48); font-weight:800; font-size:12.5px;">
+            © <span id="year"></span> endmysub
+          </div>
+        </div>
+
+        <div class="footlinks">
+          <a href="ToS.html">Nutzungsbedingungen</a>
+          <a href="privacy.html">Datenschutz</a>
+          <a href="impressum.html">Impressum</a>
+          <a href="contact.html">Kontakt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== CONFIG =====
+    const CHECKOUT_URL = "payment.html";
+
+    // Optional: eigener Backend-Endpoint (leer lassen = überspringen)
+    const FORM_ENDPOINT = "";
+
+    // ===== SUPABASE (Frontend Insert) =====
+    const SUPABASE_URL = "https://babacmszcumkgzyzidnh.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYmFjbXN6Y3Vta2d6eXppZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDU4NTAsImV4cCI6MjA4NDM4MTg1MH0.rRhi17MQIlE-5iJQDSYu9CENxvaHhbFyHhSct_x-QaY";
+
+    const sb = (typeof supabase !== "undefined" && SUPABASE_URL && SUPABASE_ANON)
+      ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+      : null;
+
+    // ===== UI =====
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const burger = document.getElementById("burger");
+    const mobile = document.getElementById("mobile");
+    if (burger && mobile){
+      burger.addEventListener("click", () => mobile.classList.toggle("show"));
+      mobile.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobile.classList.remove("show")));
+    }
+
+    // ===== FORM FLOW =====
+    const form = document.getElementById("requestForm");
+    const btnPay = document.getElementById("btnPay");
+    const payStatus = document.getElementById("payStatus");
+
+    function statusOk(msg){
+      payStatus.className = "formStatus ok";
+      payStatus.textContent = msg;
+    }
+    function statusErr(msg){
+      payStatus.className = "formStatus err";
+      payStatus.textContent = msg;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        service: document.getElementById("service").value.trim(),
+        country: document.getElementById("country").value,
+        email: document.getElementById("email").value.trim(),
+        details: document.getElementById("details").value.trim()
+      };
+
+      if (!data.service || !data.country || !data.email){
+        statusErr("Bitte Pflichtfelder ausfüllen.");
+        return;
+      }
+
+      // Immer lokal sichern (Fallback)
+      try { localStorage.setItem("endmysub_request", JSON.stringify(data)); } catch (_) {}
+
+      // Optional eigener Endpoint
+      if (FORM_ENDPOINT){
+        try{
+          await fetch(FORM_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+        }catch(_){}
+      }
+
+      // Supabase Insert (blockiert Redirect nicht)
+      if (sb){
+        try{
+const payload = {
+  service: data.service,
+  country: data.country,
+  email: data.email,
+  details: data.details,
+  status: "pending_payment"
+};
+
+const { error } = await sb.from("cancellations").insert(payload);
+
+          if (error){
+            statusErr("Hinweis: Speichern fehlgeschlagen. Weiterleitung läuft...");
+          }
+        }catch(_){
+          statusErr("Hinweis: Speichern fehlgeschlagen. Weiterleitung läuft...");
+        }
+      }
+
+      if (!CHECKOUT_URL || CHECKOUT_URL.trim() === ""){
+        statusErr("CHECKOUT_URL fehlt in index.html (unten im Script).");
+        return;
+      }
+
+      btnPay.disabled = true;
+      statusOk("Weiterleitung zur Zahlung...");
+
+      window.location.assign(CHECKOUT_URL);
+    });
+  </script>
+</body>
+</html>
