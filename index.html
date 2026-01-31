@@ -1,8 +1,8 @@
-<!-- index.html — endmysub Homepage (FULL) + SUPABASE INSERT
-  Fixes:
-  - "Weiter zur Zahlung" funktioniert immer (Redirect zu payment.html)
-  - Speichert Anfrage in Supabase: public.cancellations (anon insert via RLS)
-  - GitHub Pages kompatibel (case-sensitive)
+<!-- index.html (FULL) — PALETTE + "SO FUNKTIONIERT" ANIMATION + SUPABASE INSERT
+  Change:
+  - "So funktioniert endmysub" added as animated section (bigger + darker text, no "GIF Animation für PPT")
+  - Header CTA "Jetzt starten" -> cancel.html
+  - Review stays in header -> review.html
 -->
 <!doctype html>
 <html lang="de">
@@ -11,41 +11,45 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>endmysub — Kündigung von Abos als Service</title>
   <meta name="description" content="Wir übernehmen die Kündigung Ihrer Abos. Fixpreis. Bestätigung inklusive." />
-  <meta name="theme-color" content="#0b1220" />
+  <meta name="theme-color" content="#1F3A5F" />
 
   <!-- Supabase (Frontend SDK) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root{
-      --bg0:#070b14;
-      --bg1:#0b1220;
-      --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.08);
-      --stroke:rgba(255,255,255,.12);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
+      /* Palette */
+      --primary:#1F3A5F;     /* Deep Blue */
+      --slate:#5E7A8A;       /* Soft Slate */
+      --bg:#F6F8FA;          /* Off-White */
+      --green:#4CAF8A;       /* Muted Green */
+      --divider:#E1E5EA;     /* Warm Gray */
 
-      --green:#35e08f;
-      --green2:#18b86f;
+      /* UI */
+      --text:#1F3A5F;
+      --muted:#5E7A8A;
+
+      --card: rgba(255,255,255,.92);
+      --card2: rgba(255,255,255,.98);
+      --stroke: rgba(31,58,95,.14);
 
       --radius:16px;
-      --shadow: 0 18px 40px rgba(0,0,0,.35);
-      --shadow2: 0 10px 24px rgba(0,0,0,.28);
+      --shadow: 0 18px 40px rgba(31,58,95,.12);
+      --shadow2: 0 10px 24px rgba(31,58,95,.10);
       --max:1120px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
+
     body{
       margin:0;
       color:var(--text);
       font: 16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
       background:
-        radial-gradient(900px 520px at 20% 10%, rgba(53,224,143,.24), transparent 60%),
-        radial-gradient(900px 520px at 80% 20%, rgba(96,165,250,.18), transparent 62%),
-        radial-gradient(900px 520px at 50% 110%, rgba(255,92,122,.14), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+        radial-gradient(900px 520px at 20% 10%, rgba(76,175,138,.18), transparent 60%),
+        radial-gradient(900px 520px at 80% 20%, rgba(94,122,138,.18), transparent 62%),
+        linear-gradient(180deg, #ffffff, var(--bg));
       overflow-x:hidden;
     }
 
@@ -56,17 +60,17 @@
     .header{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(10px);
-      background: linear-gradient(180deg, rgba(7,11,20,.78), rgba(7,11,20,.45));
-      border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(246,248,250,.88);
+      border-bottom:1px solid var(--divider);
     }
 
-    /* Header nutzt volle Breite (nur im Header) */
+    /* Header uses full width (only in header) */
     .header .wrap{
       max-width: 100%;
       padding: 0 28px;
     }
 
-    /* 3-Spalten Layout: Brand | Nav | CTA */
+    /* 3-column layout: Brand | Nav | CTA */
     .nav{
       display:grid;
       grid-template-columns: auto 1fr auto;
@@ -86,18 +90,10 @@
 
     .logo{
       width: 520px;
-      height: 120px;
+      height: 240px;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));
-    }
-
-    .brand-name{
-      font-weight:900;
-      font-size: 22px;
-      line-height: 1;
-      white-space: nowrap;
-      color: rgba(198,255,233,.95);
+      filter: drop-shadow(0 10px 18px rgba(31,58,95,.20));
     }
 
     .navlinks{
@@ -109,12 +105,12 @@
     }
     .navlinks a{
       color:var(--muted);
-      font-weight:600;
+      font-weight:700;
       padding:10px 10px;
       border-radius:10px;
       transition: .15s ease;
     }
-    .navlinks a:hover{color:var(--text); background:rgba(255,255,255,.06)}
+    .navlinks a:hover{color:var(--text); background:rgba(31,58,95,.06)}
 
     .nav-cta{
       justify-self: end;
@@ -130,21 +126,21 @@
       height:44px; padding:0 16px;
       border-radius:12px;
       font-weight:800;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.70);
       color:var(--text);
       transition: .15s ease;
       cursor:pointer;
       user-select:none;
       white-space: nowrap;
     }
-    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085)}
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.92)}
     .btn:active{transform: translateY(0px)}
     .btn.primary{
-      border-color: rgba(53,224,143,.35);
-      background: linear-gradient(135deg, var(--green), #7cf3c2);
-      color:#05210f;
-      box-shadow: 0 18px 40px rgba(53,224,143,.18);
+      border-color: rgba(76,175,138,.35);
+      background: linear-gradient(135deg, var(--green), rgba(76,175,138,.72));
+      color:#ffffff;
+      box-shadow: 0 18px 40px rgba(76,175,138,.18);
     }
     .btn.primary:hover{filter: brightness(1.02)}
     .btn.ghost{background: transparent}
@@ -160,85 +156,118 @@
       gap: 22px;
       align-items: start;
     }
+
     .badge-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
     .badge{
       display:inline-flex; align-items:center; gap:8px;
       padding: 7px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.70);
       color:var(--muted);
-      font-weight:700;
+      font-weight:800;
       font-size: 13px;
     }
+
     h1{
       margin: 0 0 10px;
       font-size: clamp(34px, 4.4vw, 56px);
       line-height: 1.06;
       letter-spacing: -.6px;
+      color: var(--primary);
     }
     .sub{
       margin: 0 0 18px;
       color: var(--muted);
       font-size: 16px;
       max-width: 56ch;
+      font-weight:650;
     }
+
     .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin: 18px 0 12px}
-    .micro{color: rgba(255,255,255,.56); font-size: 12.5px; margin-top: 8px;}
+    .micro{color: rgba(94,122,138,.92); font-size: 12.5px; margin-top: 8px; font-weight:650;}
+
+    .glowline{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(76,175,138,.55), rgba(31,58,95,.22), transparent);
+      margin: 18px 0 0;
+    }
 
     .hero-card{
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+      border:1px solid var(--divider);
+      background: var(--card);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
     .hero-card .hd{
       padding: 16px 16px 12px;
-      border-bottom:1px solid rgba(255,255,255,.10);
+      border-bottom:1px solid var(--divider);
       display:flex; justify-content:space-between; align-items:center; gap:12px;
+      background: rgba(255,255,255,.70);
     }
-    .price{font-size: 22px; font-weight: 900;}
+    .price{font-size: 22px; font-weight: 900; color: var(--primary);}
     .price small{
-      font-size: 12px; color: rgba(255,255,255,.62); font-weight: 800;
+      font-size: 12px; color: var(--muted); font-weight: 800;
       margin-left: 6px;
     }
     .hero-card .bd{padding: 16px}
+
     .field{display:flex; flex-direction:column; gap:7px; margin-bottom: 12px}
-    label{color: rgba(255,255,255,.72); font-weight:800; font-size: 12px}
+    label{color: rgba(31,58,95,.88); font-weight:900; font-size: 12px}
+
     input,select{
       height: 44px;
       border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.92);
       color: var(--text);
       padding: 0 12px;
       outline:none;
+      font-weight:650;
     }
-    input:focus,select:focus{border-color: rgba(53,224,143,.35); box-shadow: 0 0 0 3px rgba(53,224,143,.12)}
+    input:focus,select:focus{
+      border-color: rgba(76,175,138,.55);
+      box-shadow: 0 0 0 3px rgba(76,175,138,.18);
+    }
+
     .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+
     .note{
       margin-top: 10px;
-      color: rgba(255,255,255,.62);
+      color: rgba(94,122,138,.98);
       font-size: 12.5px;
+      font-weight:700;
     }
-    .divider{height: 1px; background: rgba(255,255,255,.10); margin: 16px 0;}
-    .minirow{display:flex; gap:10px; align-items:center; color: rgba(255,255,255,.70); font-size: 13px}
-    .dot{width:8px; height:8px; border-radius:99px; background: rgba(53,224,143,.9); box-shadow: 0 0 0 4px rgba(53,224,143,.12)}
+
+    .divider{height: 1px; background: var(--divider); margin: 16px 0;}
+
+    .minirow{
+      display:flex; gap:10px; align-items:center;
+      color: rgba(31,58,95,.86);
+      font-size: 13px;
+      font-weight:750;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(76,175,138,.16);
+    }
 
     .formStatus{
       margin-top:10px;
       font-size:12.5px;
-      font-weight:800;
+      font-weight:850;
       line-height:1.45;
       padding:10px 12px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.85);
       display:none;
+      word-break: break-word;
     }
-    .formStatus.ok{display:block; color:#c6ffe9; border-color: rgba(53,224,143,.25)}
-    .formStatus.err{display:block; color:#ffd3b0; border-color: rgba(255,211,176,.22)}
+    .formStatus.ok{display:block; color: var(--primary); border-color: rgba(76,175,138,.35)}
+    .formStatus.err{display:block; color:#9a4f2a; border-color: rgba(154,79,42,.18)}
 
     /* Sections */
     section{padding: 44px 0}
@@ -246,8 +275,8 @@
       display:flex; justify-content:space-between; align-items:flex-end; gap:18px;
       margin-bottom: 18px;
     }
-    .section-h h2{margin:0; font-size: 28px; letter-spacing: -.3px;}
-    .section-h p{margin:0; color: var(--muted); max-width: 70ch}
+    .section-h h2{margin:0; font-size: 28px; letter-spacing: -.3px; color: var(--primary);}
+    .section-h p{margin:0; color: var(--muted); max-width: 70ch; font-weight:650}
 
     .cards{
       display:grid;
@@ -255,20 +284,20 @@
       gap: 14px;
     }
     .card{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--divider);
+      background: var(--card);
       border-radius: var(--radius);
       padding: 16px;
       box-shadow: var(--shadow2);
       min-height: 150px;
     }
-    .card h3{margin:0 0 8px; font-size: 16px}
-    .card p{margin:0; color: var(--muted)}
+    .card h3{margin:0 0 8px; font-size: 16px; color: var(--primary)}
+    .card p{margin:0; color: var(--muted); font-weight:650}
     .icon{
       width: 38px; height: 38px; border-radius: 12px;
       display:flex; align-items:center; justify-content:center;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
+      background: rgba(31,58,95,.06);
+      border:1px solid var(--divider);
       margin-bottom: 12px;
     }
 
@@ -278,8 +307,8 @@
       gap: 14px;
     }
     .step{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--divider);
+      background: var(--card);
       border-radius: var(--radius);
       padding: 16px;
       box-shadow: var(--shadow2);
@@ -287,14 +316,172 @@
     .step .n{
       display:inline-flex; align-items:center; justify-content:center;
       width: 28px; height: 28px; border-radius: 10px;
-      background: rgba(53,224,143,.14);
-      border:1px solid rgba(53,224,143,.25);
-      color: #bffbe1;
-      font-weight: 900;
+      background: rgba(76,175,138,.14);
+      border:1px solid rgba(76,175,138,.28);
+      color: var(--primary);
+      font-weight: 950;
       margin-bottom: 10px;
     }
-    .step h3{margin:0 0 6px; font-size: 16px}
-    .step p{margin:0; color: var(--muted)}
+    .step h3{margin:0 0 6px; font-size: 16px; color: var(--primary)}
+    .step p{margin:0; color: var(--muted); font-weight:650}
+
+    /* Animated flow line for Ablauf */
+    .flowline{
+      position:relative;
+      height: 2px;
+      background: var(--divider);
+      border-radius: 99px;
+      overflow:hidden;
+      margin: 14px 0 18px;
+    }
+    .flowline::after{
+      content:"";
+      position:absolute;
+      top:50%;
+      width: 10px;
+      height: 10px;
+      background: var(--green);
+      border-radius: 99px;
+      transform: translateY(-50%);
+      box-shadow: 0 0 0 6px rgba(76,175,138,.16);
+      animation: flowdot 2.8s ease-in-out infinite;
+    }
+    @keyframes flowdot{
+      0%{ left: 0%; }
+      50%{ left: calc(100% - 10px); }
+      100%{ left: 0%; }
+    }
+
+    /* So funktioniert (animated cards) */
+    .how{
+      padding-top: 10px;
+    }
+    .how-shell{
+      border-radius: 22px;
+      border: 1px solid rgba(31,58,95,.10);
+      background:
+        radial-gradient(900px 520px at 15% 0%, rgba(76,175,138,.22), transparent 58%),
+        radial-gradient(900px 520px at 85% 10%, rgba(94,122,138,.18), transparent 60%),
+        linear-gradient(180deg, rgba(31,58,95,.96), rgba(31,58,95,.88));
+      box-shadow: 0 20px 50px rgba(31,58,95,.20);
+      padding: 26px 22px;
+      overflow: hidden;
+    }
+    .how-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 18px;
+    }
+    .how-title{
+      margin:0;
+      font-size: clamp(26px, 3.1vw, 40px);
+      letter-spacing: -.4px;
+      color: #ffffff;
+      font-weight: 950;
+      line-height: 1.08;
+    }
+    .how-note{
+      margin:6px 0 0;
+      color: rgba(246,248,250,.92);
+      font-weight: 750;
+      font-size: 14px;
+    }
+    .how-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .how-card{
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(246,248,250,.96);
+      padding: 14px 16px;
+      overflow:hidden;
+    }
+
+    .how-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      opacity:0;
+      background: linear-gradient(90deg, rgba(76,175,138,.98), rgba(76,175,138,.78));
+      transition: opacity .25s ease;
+    }
+
+    .how-num{
+      position:relative;
+      z-index:1;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 950;
+      font-size: 18px;
+      color: #ffffff;
+      background: var(--green);
+      box-shadow: 0 10px 18px rgba(0,0,0,.14);
+      flex: 0 0 auto;
+    }
+
+    .how-txt{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .how-txt strong{
+      font-size: 20px;       /* bigger */
+      font-weight: 950;
+      color: #0f2138;        /* darker */
+      line-height: 1.15;
+    }
+    .how-txt span{
+      font-size: 16.5px;     /* bigger */
+      font-weight: 800;      /* darker feel */
+      color: rgba(15,33,56,.85);
+      line-height: 1.25;
+    }
+
+    .how-card.active::before{ opacity:1; }
+    .how-card.active .how-txt strong,
+    .how-card.active .how-txt span{
+      color:#ffffff;
+      text-shadow: 0 1px 0 rgba(0,0,0,.08);
+    }
+    .how-card.active .how-num{
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: 0 10px 20px rgba(0,0,0,.16);
+    }
+
+    .how-foot{
+      margin-top: 14px;
+      color: rgba(246,248,250,.92);
+      font-weight: 800;
+      font-size: 12.5px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      opacity: .92;
+    }
+    .how-foot span{
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+    }
 
     /* Reviews (homepage section) */
     .reviews{
@@ -303,15 +490,15 @@
       gap: 14px;
     }
     .review{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--divider);
+      background: var(--card);
       border-radius: var(--radius);
       padding: 16px;
       box-shadow: var(--shadow2);
     }
     .stars{display:flex; gap:4px; margin-bottom: 10px}
-    .review p{margin:0 0 12px; color: rgba(255,255,255,.78)}
-    .who{display:flex; justify-content:space-between; color: rgba(255,255,255,.58); font-weight: 800; font-size: 12.5px}
+    .review p{margin:0 0 12px; color: rgba(31,58,95,.90); font-weight:700}
+    .who{display:flex; justify-content:space-between; color: rgba(94,122,138,.95); font-weight: 800; font-size: 12.5px}
 
     /* FAQ */
     .faq{
@@ -320,26 +507,26 @@
       gap: 12px;
     }
     details{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--divider);
+      background: var(--card);
       border-radius: var(--radius);
       padding: 14px 14px;
       box-shadow: var(--shadow2);
     }
     summary{
       cursor:pointer;
-      font-weight: 900;
-      color: rgba(255,255,255,.88);
+      font-weight: 950;
+      color: rgba(31,58,95,.94);
       list-style:none;
     }
     summary::-webkit-details-marker{display:none}
-    details p{margin:10px 0 0; color: var(--muted)}
+    details p{margin:10px 0 0; color: var(--muted); font-weight:650}
 
     /* Footer */
     footer{
       padding: 34px 0 46px;
-      border-top:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
+      border-top:1px solid var(--divider);
+      background: rgba(255,255,255,.65);
     }
     .footgrid{
       display:grid;
@@ -349,14 +536,14 @@
     }
     .footlinks{display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end}
     .footlinks a{
-      color: rgba(255,255,255,.62);
-      font-weight: 800;
+      color: rgba(31,58,95,.80);
+      font-weight: 850;
       padding: 8px 10px;
       border-radius: 10px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.85);
     }
-    .footlinks a:hover{color: rgba(255,255,255,.86); background: rgba(255,255,255,.06)}
+    .footlinks a:hover{background: rgba(255,255,255,.98)}
 
     /* Responsive */
     @media (max-width: 980px){
@@ -374,30 +561,46 @@
 
       .header .wrap{padding: 0 14px;}
       .nav{min-height: 92px;}
-      .logo{width: 320px; height: 78px;}
-      .brand-name{font-size: 18px;}
+      .logo{width: 380px; height: 180px;}
+
+      .how-shell{ padding: 18px 14px; }
+      .how-txt strong{ font-size: 18px; }
+      .how-txt span{ font-size: 15.5px; }
     }
 
     /* Mobile menu */
     .mobile{
       display:none;
-      border-top:1px solid rgba(255,255,255,.10);
-      background: rgba(7,11,20,.82);
+      border-top:1px solid var(--divider);
+      background: rgba(246,248,250,.96);
     }
     .mobile a{
       display:block;
       padding: 12px 20px;
-      color: rgba(255,255,255,.78);
-      font-weight: 900;
-      border-bottom:1px solid rgba(255,255,255,.08);
+      color: rgba(31,58,95,.86);
+      font-weight: 950;
+      border-bottom:1px solid var(--divider);
     }
-    .mobile a:hover{background: rgba(255,255,255,.06); color: rgba(255,255,255,.92)}
+    .mobile a:hover{background: rgba(31,58,95,.05); color: rgba(31,58,95,.92)}
     .mobile.show{display:block}
 
-    .glowline{
-      height:1px;
-      background: linear-gradient(90deg, transparent, rgba(53,224,143,.42), rgba(96,165,250,.28), transparent);
-      margin: 18px 0 0;
+    /* Reveal Animation */
+    .reveal{
+      opacity:0;
+      transform: translateY(14px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .reveal.in{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .reveal.in.delay-1{ transition-delay:.06s; }
+    .reveal.in.delay-2{ transition-delay:.12s; }
+    .reveal.in.delay-3{ transition-delay:.18s; }
+
+    @media (prefers-reduced-motion: reduce){
+      .reveal{transition:none; opacity:1; transform:none;}
+      .flowline::after{animation:none;}
     }
   </style>
 </head>
@@ -408,31 +611,30 @@
       <div class="nav">
         <a class="brand" href="index.html" aria-label="endmysub home">
           <img class="logo" src="endmysublogo.png" alt="endmysub Logo">
-          <span class="brand-name">endmysub</span>
         </a>
 
         <nav class="navlinks" aria-label="Navigation">
-          <a href="#ablauf">Ablauf</a>
+          <a href="#how">Ablauf</a>
           <a href="#preise">Preise</a>
           <a href="#bewertungen">Bewertungen</a>
           <a href="#faq">FAQ</a>
-          <a href="about.html">Warum endmysub?</a>
         </nav>
 
         <div class="nav-cta">
           <button class="btn burger" id="burger" type="button" aria-label="Menü öffnen">Menü</button>
-          <a class="btn ghost" href="#faq">Fragen</a>
-          <a class="btn primary" href="#start">Jetzt starten</a>
+          <a class="btn ghost" href="review.html">Review</a>
+          <a class="btn primary" href="cancel.html">Jetzt starten</a>
         </div>
       </div>
     </div>
 
     <div class="mobile" id="mobile">
-      <a href="#ablauf">Ablauf</a>
+      <a href="#how">Ablauf</a>
       <a href="#preise">Preise</a>
       <a href="#bewertungen">Bewertungen</a>
       <a href="#faq">FAQ</a>
-      <a href="#start">Jetzt starten</a>
+      <a href="review.html">Review</a>
+      <a href="cancel.html">Jetzt starten</a>
     </div>
   </header>
 
@@ -454,8 +656,8 @@
             </p>
 
             <div class="hero-actions">
-              <a class="btn primary" href="#start">Jetzt starten</a>
-              <a class="btn" href="#ablauf">So funktioniert’s</a>
+              <a class="btn primary" href="cancel.html">Jetzt starten</a>
+              <a class="btn" href="#how">So funktioniert’s</a>
             </div>
 
             <div class="micro">
@@ -468,8 +670,8 @@
           <aside class="hero-card" id="start" aria-label="Start Formular">
             <div class="hd">
               <div>
-                <div style="font-weight:900; letter-spacing:-.2px;">Anfrage starten</div>
-                <div style="color:rgba(255,255,255,.62); font-size:12.5px; font-weight:800;">Dauer: ~1 Minute</div>
+                <div style="font-weight:950; letter-spacing:-.2px; color:var(--primary);">Anfrage starten</div>
+                <div style="color:var(--muted); font-size:12.5px; font-weight:800;">Dauer: ~1 Minute</div>
               </div>
               <div class="price">22,00&nbsp;€<small>inkl.</small></div>
             </div>
@@ -486,11 +688,11 @@
                     <label for="country">Land</label>
                     <select id="country" name="country" required>
                       <option value="" selected disabled>Bitte auswählen</option>
-                      <option value="USA">USA</option>
                       <option value="Europe">Europe</option>
                       <option value="Österreich">Österreich</option>
                       <option value="Deutschland">Deutschland</option>
                       <option value="Schweiz">Schweiz</option>
+                      <option value="USA">USA</option>
                     </select>
                   </div>
 
@@ -526,34 +728,54 @@
         </div>
       </section>
 
-      <section id="ablauf">
-        <div class="section-h">
-          <div>
-            <h2>Ablauf</h2>
-            <p>Ein klarer Prozess. Kein Hin und Her.</p>
+      <!-- So funktioniert endmysub (animated) -->
+      <section id="how" class="how">
+        <div class="how-shell reveal">
+          <div class="how-head">
+            <div>
+              <h2 class="how-title">So funktioniert endmysub</h2>
+              <p class="how-note">Vier Schritte. Klarer Ablauf. Keine Umwege.</p>
+            </div>
           </div>
-        </div>
 
-        <div class="steps">
-          <div class="step">
-            <div class="n">1</div>
-            <h3>Daten eingeben</h3>
-            <p>Du gibst Anbieter, Land und Kontakt an. Optional: Zusatzinfo zur Zuordnung.</p>
+          <div class="how-grid" id="howGrid" aria-label="So funktioniert endmysub">
+            <div class="how-card active" data-step="1">
+              <div class="how-num">1</div>
+              <div class="how-txt">
+                <strong>Daten eingeben</strong>
+                <span>Anbieter, Land, E-Mail, optional Zusatzinfo.</span>
+              </div>
+            </div>
+
+            <div class="how-card" data-step="2">
+              <div class="how-num">2</div>
+              <div class="how-txt">
+                <strong>Zahlung</strong>
+                <span>Einmalig 22,00 € – kein Abo.</span>
+              </div>
+            </div>
+
+            <div class="how-card" data-step="3">
+              <div class="how-num">3</div>
+              <div class="how-txt">
+                <strong>Kündigung</strong>
+                <span>Wir übernehmen den Prozess und dokumentieren.</span>
+              </div>
+            </div>
+
+            <div class="how-card" data-step="4">
+              <div class="how-num">4</div>
+              <div class="how-txt">
+                <strong>Bestätigung</strong>
+                <span>Status + Bestätigung per E-Mail.</span>
+              </div>
+            </div>
           </div>
-          <div class="step">
-            <div class="n">2</div>
-            <h3>Zahlung</h3>
-            <p>Einmalig 22,00&nbsp;€. Kein Abo. Keine versteckten Gebühren.</p>
-          </div>
-          <div class="step">
-            <div class="n">3</div>
-            <h3>Kündigung</h3>
-            <p>Wir erledigen deinen Auftrag und dokumentieren die Schritte.</p>
-          </div>
-          <div class="step">
-            <div class="n">4</div>
-            <h3>Bestätigung</h3>
-            <p>Du erhältst die Kündigungsbestätigung (oder Status + nächste Schritte).</p>
+
+          <div class="how-foot" aria-hidden="true">
+            <span>Unabhängiger Service</span>
+            <span>Keine Rechtsberatung</span>
+            <span>Nicht mit Anbietern verbunden</span>
           </div>
         </div>
       </section>
@@ -567,31 +789,31 @@
         </div>
 
         <div class="cards">
-          <div class="card">
+          <div class="card reveal">
             <div class="icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M20 7l-8 10-4-4" stroke="rgba(53,224,143,.92)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20 7l-8 10-4-4" stroke="rgba(76,175,138,.92)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <h3>22,00&nbsp;€ Fixpreis</h3>
             <p>Kündigung + Bestätigung inklusive. Kein Abo.</p>
           </div>
 
-          <div class="card">
+          <div class="card reveal">
             <div class="icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10z" stroke="rgba(96,165,250,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10z" stroke="rgba(31,58,95,.78)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <h3>Unabhängig</h3>
             <p>Kein Bezug zu den Anbietern. Wir arbeiten in deinem Auftrag.</p>
           </div>
 
-          <div class="card">
+          <div class="card reveal">
             <div class="icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M12 6v6l4 2" stroke="rgba(255,211,106,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke="rgba(255,211,106,.55)" stroke-width="2"/>
+                <path d="M12 6v6l4 2" stroke="rgba(31,58,95,.78)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke="rgba(31,58,95,.32)" stroke-width="2"/>
               </svg>
             </div>
             <h3>Sauberer Ablauf</h3>
@@ -609,37 +831,37 @@
         </div>
 
         <div class="reviews">
-          <div class="review">
+          <div class="review reveal">
             <div class="stars" aria-label="5 Sterne">
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
             </div>
             <p>Sauberer Ablauf, klare Kommunikation, Kündigung kam durch.</p>
             <div class="who"><span>Verifiziert</span><span>DE</span></div>
           </div>
 
-          <div class="review">
+          <div class="review reveal">
             <div class="stars" aria-label="5 Sterne">
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
             </div>
             <p>Endlich weg mit dem Abo. Kein Theater, einfach erledigt.</p>
             <div class="who"><span>Verifiziert</span><span>AT</span></div>
           </div>
 
-          <div class="review">
+          <div class="review reveal">
             <div class="stars" aria-label="4 Sterne">
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(53,224,143,.9)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
-              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(255,255,255,.16)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(76,175,138,.92)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="rgba(31,58,95,.16)" d="M12 17.3l-6.2 3.7 1.7-7.1-5.5-4.8 7.2-.6L12 2l2.8 6.5 7.2.6-5.5 4.8 1.7 7.1z"/></svg>
             </div>
             <p>Support war schnell. Bestätigung kam einen Tag später.</p>
             <div class="who"><span>Verifiziert</span><span>CH</span></div>
@@ -656,19 +878,19 @@
         </div>
 
         <div class="faq">
-          <details>
+          <details class="reveal">
             <summary>Ist das ein Abo?</summary>
             <p>Nein. Einmalige Zahlung pro Auftrag.</p>
           </details>
-          <details>
+          <details class="reveal">
             <summary>Wie lange dauert das?</summary>
             <p>Je nach Anbieter. Du erhältst Status-Updates und die Bestätigung, sobald verfügbar.</p>
           </details>
-          <details>
+          <details class="reveal">
             <summary>Welche Daten braucht ihr?</summary>
             <p>Mindestens Anbieter, Land und deine E-Mail. Optional: Zusatzinfo zur schnelleren Zuordnung.</p>
           </details>
-          <details>
+          <details class="reveal">
             <summary>Seid ihr der Anbieter?</summary>
             <p>Nein. endmysub ist ein unabhängiger Service und nicht mit den Anbietern verbunden.</p>
           </details>
@@ -681,11 +903,11 @@
     <div class="wrap">
       <div class="footgrid">
         <div>
-          <div style="font-weight:900; margin-bottom:8px;">endmysub</div>
-          <div style="color:rgba(255,255,255,.62); max-width:75ch;">
+          <div style="font-weight:950; margin-bottom:8px; color:var(--primary);">endmysub</div>
+          <div style="color:rgba(94,122,138,.98); max-width:75ch; font-weight:650;">
             Unabhängiger Kündigungsservice. Keine Rechtsberatung. Keine Verbindung zu den Anbietern.
           </div>
-          <div style="margin-top:14px; color:rgba(255,255,255,.48); font-weight:800; font-size:12.5px;">
+          <div style="margin-top:14px; color:rgba(94,122,138,.92); font-weight:850; font-size:12.5px;">
             © <span id="year"></span> endmysub
           </div>
         </div>
@@ -695,6 +917,8 @@
           <a href="privacy.html">Datenschutz</a>
           <a href="impressum.html">Impressum</a>
           <a href="contact.html">Kontakt</a>
+          <a href="about.html">Warum endmysub?</a>
+          <a href="review.html">Review</a>
         </div>
       </div>
     </div>
@@ -702,17 +926,16 @@
 
   <script>
     // ===== CONFIG =====
-    const CHECKOUT_URL = "payment.html";
-
-    // Optional: eigener Backend-Endpoint (leer lassen = überspringen)
-    const FORM_ENDPOINT = "";
+    const CHECKOUT_URL = "Payment.html"; // case-sensitive!
 
     // ===== SUPABASE (Frontend Insert) =====
     const SUPABASE_URL = "https://babacmszcumkgzyzidnh.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYmFjbXN6Y3Vta2d6eXppZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MDU4NTAsImV4cCI6MjA4NDM4MTg1MH0.rRhi17MQIlE-5iJQDSYu9CENxvaHhbFyHhSct_x-QaY";
 
-    const sb = (typeof supabase !== "undefined" && SUPABASE_URL && SUPABASE_ANON)
-      ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+    const sb = (typeof supabase !== "undefined")
+      ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+          auth: { persistSession:false, autoRefreshToken:false, detectSessionInUrl:false }
+        })
       : null;
 
     // ===== UI =====
@@ -725,7 +948,7 @@
       mobile.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobile.classList.remove("show")));
     }
 
-    // ===== FORM FLOW =====
+    // ===== FORM FLOW (Homepage card) =====
     const form = document.getElementById("requestForm");
     const btnPay = document.getElementById("btnPay");
     const payStatus = document.getElementById("payStatus");
@@ -739,48 +962,46 @@
       payStatus.textContent = msg;
     }
 
+    function uuidv4(){
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const data = {
-        service: document.getElementById("service").value.trim(),
-        country: document.getElementById("country").value,
-        email: document.getElementById("email").value.trim(),
-        details: document.getElementById("details").value.trim()
-      };
+      const service  = document.getElementById("service").value.trim();
+      const country  = document.getElementById("country").value;
+      const email    = document.getElementById("email").value.trim();
+      const details  = document.getElementById("details").value.trim();
 
-      if (!data.service || !data.country || !data.email){
+      if (!service || !country || !email){
         statusErr("Bitte Pflichtfelder ausfüllen.");
         return;
       }
 
-      // Immer lokal sichern (Fallback)
-      try { localStorage.setItem("endmysub_request", JSON.stringify(data)); } catch (_) {}
+      const localData = { service, country, email, details };
+      try { localStorage.setItem("ems_cancel_data", JSON.stringify(localData)); } catch (_) {}
 
-      // Optional eigener Endpoint
-      if (FORM_ENDPOINT){
-        try{
-          await fetch(FORM_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-          });
-        }catch(_){}
-      }
+      const cancelId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uuidv4();
+      try { localStorage.setItem("ems_cancel_id", cancelId); } catch (_) {}
 
-      // Supabase Insert (blockiert Redirect nicht)
+      const payload = {
+        id: cancelId,
+        provider_name: service,
+        customer_email: email,
+        full_name: "",
+        phone: "",
+        optional_id: details || "",
+        status: "pending_payment"
+      };
+
       if (sb){
         try{
-const payload = {
-  service: data.service,
-  country: data.country,
-  email: data.email,
-  details: data.details,
-  status: "pending_payment"
-};
-
-const { error } = await sb.from("cancellations").insert(payload);
-
+          const { error } = await sb.from("cancellations").insert(payload);
           if (error){
             statusErr("Hinweis: Speichern fehlgeschlagen. Weiterleitung läuft...");
           }
@@ -796,9 +1017,47 @@ const { error } = await sb.from("cancellations").insert(payload);
 
       btnPay.disabled = true;
       statusOk("Weiterleitung zur Zahlung...");
-
       window.location.assign(CHECKOUT_URL);
     });
+
+    // ===== Reveal on scroll =====
+    (() => {
+      const items = document.querySelectorAll(".reveal");
+      if (!items.length) return;
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting){
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      items.forEach(el => io.observe(el));
+    })();
+
+    // ===== "So funktioniert" step highlight animation =====
+    (() => {
+      const wrap = document.getElementById("howGrid");
+      if (!wrap) return;
+
+      const cards = Array.from(wrap.querySelectorAll(".how-card"));
+      if (cards.length < 2) return;
+
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+
+      let i = 0;
+      const setActive = (idx) => {
+        cards.forEach((c, n) => c.classList.toggle("active", n === idx));
+      };
+
+      setInterval(() => {
+        i = (i + 1) % cards.length;
+        setActive(i);
+      }, 2200);
+    })();
   </script>
 </body>
 </html>
