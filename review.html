@@ -8,147 +8,185 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
 
-    /* LIGHTER BACKGROUND */
     :root{
-      --bg:#0f1930;          /* was #0b1220 */
-      --bg2:#122043;
-      --text:#e7ecff;
-      --muted:#a9b4dd;
-      --line:rgba(255,255,255,.12);
+      /* Palette */
+      --primary:#1F3A5F;   /* Deep Blue */
+      --slate:#5E7A8A;     /* Soft Slate */
+      --off:#F6F8FA;       /* Off-White */
+      --green:#4CAF8A;     /* Muted Green */
+      --gray:#E1E5EA;      /* Warm Gray */
 
-      --ems-bg:
-        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.22), transparent 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.18), transparent 55%),
-        radial-gradient(900px 600px at 50% 110%, rgba(255,92,122,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
+      /* Theme */
+      --bg0:#070b13;
+      --bg1:#0c1629;
+      --bg2:#0a1324;
+
+      --text:rgba(246,248,250,.96);
+      --muted:rgba(246,248,250,.72);
+      --line:rgba(225,229,234,.18);
+
+      --shadow:0 18px 44px rgba(0,0,0,.42);
+
+      --page:
+        radial-gradient(1200px 720px at 15% 8%, rgba(31,58,95,.46), transparent 62%),
+        radial-gradient(900px 620px at 85% 10%, rgba(94,122,138,.22), transparent 60%),
+        radial-gradient(900px 640px at 45% 115%, rgba(76,175,138,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
     }
 
     body{
-      font-family:Segoe UI,Arial,sans-serif;
-      background:var(--ems-bg);
+      font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background:var(--page);
       color:var(--text);
       min-height:100vh;
     }
 
     header{
-      background:rgba(15,25,48,.72);
-      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(31,58,95,.48), rgba(10,19,36,.84));
+      border-bottom:1px solid rgba(225,229,234,.16);
       backdrop-filter:blur(10px);
       position:sticky;top:0;z-index:20;
     }
 
-    .h{max-width:1150px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:12px}
-    .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .h{
+      max-width:1160px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      gap:12px
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+    }
 
     .logo{
-      width:320px;height:90px;object-fit:contain;background:transparent;border:0;display:block;
-      filter: drop-shadow(0 10px 28px rgba(0,0,0,.45));
+      width:380px;
+      height:180px;
+      object-fit:contain;
+      background:transparent;
+      border:0;
+      display:block;
+      filter: drop-shadow(0 12px 26px rgba(0,0,0,.45));
     }
-    .name{font-size:20px;font-weight:900;color:#c6ffe9;letter-spacing:.2px}
 
     .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+
     .btn{
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:10px;
+      border:1px solid rgba(225,229,234,.22);
+      border-radius:12px;
       padding:10px 14px;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
       font-family:inherit;
       text-decoration:none;
       display:inline-flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,.06);
-      color:var(--text);
+      background:rgba(246,248,250,.06);
+      color:var(--off);
       transition:.15s ease;
       user-select:none;
     }
-    .btn:hover{background:rgba(255,255,255,.09);transform:translateY(-1px)}
+    .btn:hover{background:rgba(246,248,250,.10);transform:translateY(-1px)}
     .btn:active{transform:translateY(0)}
     .btn.primary{
-      background:linear-gradient(180deg, rgba(134,239,172,.50), rgba(134,239,172,.26));
-      border-color:rgba(134,239,172,.85);
-      color:#062014;
+      background:linear-gradient(180deg, rgba(76,175,138,.30), rgba(76,175,138,.18));
+      border-color:rgba(76,175,138,.55);
+      color:var(--off);
     }
     .btn.primary:hover{
-      background:linear-gradient(180deg, rgba(134,239,172,.60), rgba(134,239,172,.30));
-      border-color:rgba(134,239,172,1);
+      background:linear-gradient(180deg, rgba(76,175,138,.36), rgba(76,175,138,.22));
+      border-color:rgba(76,175,138,.70);
     }
     .btn[disabled]{opacity:.6;cursor:not-allowed;transform:none}
 
-    .wrap{max-width:1150px;margin:18px auto 60px;padding:0 18px}
+    .wrap{max-width:1160px;margin:18px auto 50px;padding:0 18px}
 
     .pageGrid{
       display:grid;
-      grid-template-columns: 1fr .95fr;
-      gap:14px;
+      grid-template-columns: 1fr .92fr;
+      gap:16px;
       align-items:start;
     }
-    @media(max-width:980px){.pageGrid{grid-template-columns:1fr}}
+    @media(max-width:980px){
+      .pageGrid{grid-template-columns:1fr}
+      .logo{width:320px;height:120px}
+    }
 
     .card{
-      background:rgba(255,255,255,.055);              /* slightly lighter */
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:16px;
-      box-shadow:0 14px 34px rgba(0,0,0,.32);
+      background:linear-gradient(180deg, rgba(246,248,250,.06), rgba(246,248,250,.04));
+      border:1px solid rgba(225,229,234,.18);
+      border-radius:18px;
+      box-shadow:var(--shadow);
       padding:18px
     }
 
-    h1{font-size:26px;margin-bottom:6px}
+    h1{font-size:26px;margin-bottom:6px;letter-spacing:-.2px}
     .sub{color:var(--muted);font-size:14px;line-height:1.45}
-    .muted{font-size:12px;color:var(--muted);line-height:1.35}
+    .muted{font-size:12px;color:rgba(246,248,250,.66);line-height:1.35}
 
-    /* LEFT COLUMN: STACK */
+    .inner{
+      background:rgba(7,11,19,.44);
+      border:1px solid rgba(225,229,234,.14);
+      border-radius:14px;
+      padding:14px;
+      box-shadow:none;
+    }
+
     .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
-
-    label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}
+    label{display:block;font-size:12px;color:rgba(246,248,250,.72);margin:12px 0 6px;font-weight:900}
 
     input,textarea,select{
       width:100%;
       padding:11px 12px;
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:10px;
+      border:1px solid rgba(225,229,234,.20);
+      border-radius:12px;
       font-family:inherit;
       font-size:14px;
       outline:none;
-      background:rgba(0,0,0,.14);
-      color:var(--text)
+      background:rgba(7,11,19,.58);
+      color:var(--off)
     }
     input:focus,textarea:focus,select:focus{
-      border-color:rgba(96,165,250,.75);
-      box-shadow:0 0 0 3px rgba(42,106,214,.16)
+      border-color:rgba(94,122,138,.70);
+      box-shadow:0 0 0 3px rgba(94,122,138,.18)
     }
     textarea{min-height:120px;resize:vertical}
 
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
 
-    .stat{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .pill{
-      background:rgba(110,231,183,.10);
-      border:1px solid rgba(110,231,183,.28);
-      color:#c6ffe9;
+      background:rgba(31,58,95,.30);
+      border:1px solid rgba(225,229,234,.18);
+      color:rgba(246,248,250,.92);
       border-radius:999px;
       padding:8px 12px;
-      font-weight:900;
+      font-weight:1000;
       font-size:13px
     }
 
     .list{display:grid;gap:12px;margin-top:12px}
     .rev{
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.045);
+      border:1px solid rgba(225,229,234,.16);
+      background:rgba(7,11,19,.54);
       border-radius:14px;
       padding:14px
     }
     .revTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-    .stars{font-weight:900}
-    .revTitle{font-weight:900;margin-top:6px}
-    .revBody{color:var(--text);opacity:.92;margin-top:6px;line-height:1.45}
-    .revMeta{color:var(--muted);font-size:12px;margin-top:8px}
+    .stars{font-weight:1000}
+    .revTitle{font-weight:1000;margin-top:6px}
+    .revBody{color:rgba(246,248,250,.92);margin-top:6px;line-height:1.5}
+    .revMeta{color:rgba(246,248,250,.62);font-size:12px;margin-top:8px}
 
     .hide{display:none}
 
     .warn{
       background:rgba(255, 237, 213, .10);
-      border:1px solid rgba(254, 215, 170, .42);
+      border:1px solid rgba(254, 215, 170, .40);
       color:#ffd3b0;
       padding:10px 12px;
       border-radius:12px;
@@ -156,8 +194,8 @@
       line-height:1.35
     }
     .ok{
-      background:rgba(16,185,129,.10);
-      border:1px solid rgba(167,243,208,.28);
+      background:rgba(76,175,138,.12);
+      border:1px solid rgba(76,175,138,.22);
       color:#c6ffe9;
       padding:10px 12px;
       border-radius:12px;
@@ -165,62 +203,85 @@
       line-height:1.35
     }
 
-    /* RIGHT COLUMN: PROMO AD */
     .sideCard{position:sticky;top:92px}
     @media(max-width:980px){.sideCard{position:static}}
 
-    .promoTop{
-      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap
-    }
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:7px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.82);
-      font-weight:900;
-      font-size:12px;
-    }
+    .promoTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
     .price{
-      font-weight:1000;
+      font-weight:1100;
       font-size:22px;
       letter-spacing:-.2px;
-      color:#c6ffe9;
+      color:var(--off);
     }
     .price small{
       font-size:12px;
-      color:rgba(255,255,255,.68);
+      color:rgba(246,248,250,.66);
       font-weight:900;
       margin-left:6px;
     }
-    .promoH{
-      margin-top:12px;
-      font-size:22px;
-      font-weight:1000;
-      letter-spacing:-.2px;
-      line-height:1.15;
-    }
-    .promoP{margin-top:8px;color:rgba(255,255,255,.72);line-height:1.5}
+    .promoH{margin-top:12px;font-size:22px;font-weight:1100;letter-spacing:-.2px;line-height:1.15}
+    .promoP{margin-top:8px;color:rgba(246,248,250,.72);line-height:1.55}
+
     .promoList{margin-top:14px;display:grid;gap:10px}
     .promoItem{
       display:flex;gap:10px;align-items:flex-start;
       padding:10px 12px;border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.10);
+      border:1px solid rgba(225,229,234,.16);
+      background:rgba(7,11,19,.46);
     }
     .tick{
       width:22px;height:22px;border-radius:8px;
       display:inline-flex;align-items:center;justify-content:center;
-      background:rgba(110,231,183,.14);
-      border:1px solid rgba(110,231,183,.28);
+      background:rgba(76,175,138,.14);
+      border:1px solid rgba(76,175,138,.22);
       color:#c6ffe9;
-      font-weight:1000;
+      font-weight:1100;
       flex:0 0 auto;
       margin-top:1px;
     }
-    .promoItem b{display:block;font-weight:1000}
+    .promoItem b{display:block;font-weight:1100}
     .promoCta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
-    .promoFoot{margin-top:12px;color:rgba(255,255,255,.60);font-size:12px;line-height:1.35}
+    .promoFoot{margin-top:12px;color:rgba(246,248,250,.60);font-size:12px;line-height:1.35}
+
+    footer{
+      border-top:1px solid rgba(225,229,234,.14);
+      background:linear-gradient(180deg, rgba(10,19,36,.40), rgba(7,11,19,.68));
+      padding:26px 18px;
+    }
+    .footWrap{max-width:1160px;margin:0 auto}
+    .footTitle{
+      font-weight:1100;
+      letter-spacing:.2px;
+      font-size:18px;
+      color:var(--off);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .footLogo{
+      width:34px;
+      height:34px;
+      object-fit:contain;
+      display:block;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+    }
+    .footText{margin-top:10px;color:rgba(246,248,250,.70);line-height:1.6;max-width:92ch}
+    .footNav{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+    .footLink{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(225,229,234,.18);
+      background:rgba(246,248,250,.06);
+      color:rgba(246,248,250,.82);
+      font-weight:950;
+      text-decoration:none;
+      transition:.15s ease;
+    }
+    .footLink:hover{background:rgba(246,248,250,.10);transform:translateY(-1px)}
+    .footLink:active{transform:translateY(0)}
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -229,9 +290,8 @@
 <body>
 <header>
   <div class="h">
-    <a class="brand" href="index.html" aria-label="endmysub home">
-      <img class="logo" src="endmysublogo.png" alt="endmysub logo">
-      <span class="name">endmysub</span>
+    <a class="brand" href="index.html" aria-label="">
+      <img class="logo" src="endmysublogo1.png" alt="endmysub logo">
     </a>
 
     <div class="right">
@@ -251,9 +311,9 @@
 
         <div id="statusBox" class="ok" style="margin-top:12px">Ready.</div>
 
-        <!-- LOGIN BOX (STACKED) -->
+        <!-- LOGIN BOX -->
         <div id="loginBox" class="grid">
-          <div class="card" style="box-shadow:none;border-radius:14px">
+          <div class="inner">
             <h2 style="font-size:18px">Login / Sign up</h2>
             <p class="muted" style="margin-top:6px">Use email + password.</p>
 
@@ -271,7 +331,7 @@
             <div class="muted" id="authMsg" style="margin-top:10px"></div>
           </div>
 
-          <div class="card" style="box-shadow:none;border-radius:14px">
+          <div class="inner">
             <div class="warn">
               New reviews are marked as “pending” until approved.
             </div>
@@ -290,7 +350,7 @@
           </div>
 
           <div class="grid" style="margin-top:14px">
-            <div class="card" style="box-shadow:none;border-radius:14px">
+            <div class="inner">
               <h2 style="font-size:18px">Write a review</h2>
 
               <label>Display name</label>
@@ -321,7 +381,7 @@
               </div>
             </div>
 
-            <div class="card" style="box-shadow:none;border-radius:14px">
+            <div class="inner">
               <h2 style="font-size:18px">Latest reviews</h2>
 
               <label>Filter</label>
@@ -339,11 +399,10 @@
       </div>
     </div>
 
-    <!-- RIGHT: PROMO -->
+    <!-- RIGHT -->
     <aside class="rightCol">
       <div class="card sideCard">
         <div class="promoTop">
-          <span class="badge">endmysub · Kündigungsservice</span>
           <div class="price">22,00 €<small>einmalig</small></div>
         </div>
 
@@ -371,6 +430,28 @@
     </aside>
   </div>
 </div>
+
+<footer>
+  <div class="footWrap">
+    <div class="footTitle">
+      <img class="footLogo" src="endmysublogo1.png" alt="endmysub logo">
+      endmysub
+    </div>
+
+    <div class="footText">
+      Independent cancellation service. No legal advice. No affiliation with providers.
+      <br><br>
+      Review helps us show real results: short feedback after completion, visible quality, and better process transparency.
+    </div>
+
+    <div class="footNav" aria-label="Footer navigation">
+      <a class="footLink" href="ToS.html">Nutzungsbedingungen</a>
+      <a class="footLink" href="privacy.html">Datenschutz</a>
+      <a class="footLink" href="impressum.html">Impressum</a>
+      <a class="footLink" href="contact.html">Kontakt</a>
+    </div>
+  </div>
+</footer>
 
 <script>
   // ====== SUPABASE CONFIG (SET) ======
@@ -436,7 +517,6 @@
   async function refreshAuth(){
     if (!sb) return;
     try{
-      // getSession is reliable for “nothing happens” cases (reads local session)
       const { data, error } = await sb.auth.getSession();
       if (error) authMsg.textContent = error.message;
       const user = data?.session?.user || null;
@@ -565,33 +645,24 @@
     const list = document.getElementById("list");
     list.innerHTML = "";
 
-const { data: s } = await sb.auth.getSession();
-const user = s?.session?.user;
+    const { data: s } = await sb.auth.getSession();
+    const user = s?.session?.user;
 
-if (!user){
-  list.innerHTML = `<div class="warn">Not logged in.</div>`;
-  return;
-}
+    if (!user){
+      list.innerHTML = `<div class="warn">Not logged in.</div>`;
+      return;
+    }
 
-let q = sb.from("reviews")
-  .select("id,user_id,display_name,rating,title,body,created_at,approved")
-  .order("created_at", { ascending: false })
-  .limit(50);
+    let q = sb.from("reviews")
+      .select("id,user_id,display_name,rating,title,body,created_at,approved")
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-if (filter === "approved") {
-  q = q.eq("approved", true);
-}
+    if (filter === "approved") q = q.eq("approved", true);
+    if (filter === "mine") q = q.eq("user_id", user.id);
+    if (filter === "all") q = q.or(`approved.eq.true,user_id.eq.${user.id}`);
 
-if (filter === "mine") {
-  q = q.eq("user_id", user.id);
-}
-
-if (filter === "all") {
-  q = q.or(`approved.eq.true,user_id.eq.${user.id}`);
-}
-
-const { data, error } = await q;
-
+    const { data, error } = await q;
 
     if (error) {
       list.innerHTML = `<div class="warn">${escapeHtml(error.message)}</div>`;
@@ -616,7 +687,7 @@ const { data, error } = await q;
       el.innerHTML = `
         <div class="revTop">
           <div>
-            <div class="stars">${stars(r.rating)} <span style="font-weight:700;color:${pending ? "#ffd3b0" : "#a9b4dd"};font-size:12px">${pending ? "(pending)" : ""}</span></div>
+            <div class="stars">${stars(r.rating)} <span style="font-weight:800;color:${pending ? "#ffd3b0" : "rgba(246,248,250,.66)"};font-size:12px">${pending ? "(pending)" : ""}</span></div>
             <div class="revTitle">${escapeHtml(r.title)}</div>
           </div>
           <div class="revMeta">${escapeHtml(r.display_name)} · ${escapeHtml(fmtDate(r.created_at))}</div>
@@ -632,7 +703,6 @@ const { data, error } = await q;
   }
 
   if (sb){
-    // ensure UI updates even if auth state changes without manual refresh
     sb.auth.onAuthStateChange((_event, session) => {
       setAuthedUI(session?.user || null);
     });

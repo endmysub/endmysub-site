@@ -1,63 +1,142 @@
-<!-- about.html (FULL) -->
+<!-- about.html (FULL) — PALETTE UPDATE + ABOUT BUTTON REMOVED -->
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>endmysub — About</title>
+  <title>endmysub — Warum endmysub?</title>
+  <meta name="theme-color" content="#1F3A5F" />
+
   <style>
     :root{
-      --bg:#0b1220; --text:#e7ecff; --muted:#a9b4dd; --line:rgba(255,255,255,.10);
-      --shadow:0 12px 30px rgba(0,0,0,.35); --max:1420px;
+      /* Palette */
+      --primary:#1F3A5F;     /* Deep Blue */
+      --slate:#5E7A8A;       /* Soft Slate */
+      --bg:#F6F8FA;          /* Off-White */
+      --green:#4CAF8A;       /* Muted Green */
+      --divider:#E1E5EA;     /* Warm Gray */
+
+      /* UI */
+      --text:#1F3A5F;
+      --muted:#5E7A8A;
+      --shadow:0 18px 40px rgba(31,58,95,.12);
+      --max:1420px;
       --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
     }
-    *{box-sizing:border-box} html,body{height:100%}
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; font-family:var(--font); font-size:17px; color:var(--text);
+      margin:0;
+      font-family:var(--font);
+      font-size:17px;
+      color:var(--text);
       background:
-        radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.18), transparent 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(110,231,183,.14), transparent 55%),
-        var(--bg);
+        radial-gradient(1200px 700px at 20% 10%, rgba(76,175,138,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(94,122,138,.18), transparent 55%),
+        linear-gradient(180deg, #ffffff, var(--bg));
+      overflow-x:hidden;
     }
+
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--max);margin:0 auto;padding:34px 22px 70px}
+
     .topbar{
       position:sticky;top:0;z-index:20;
       display:flex;align-items:flex-start;justify-content:space-between;
-      padding:18px 18px;border-bottom:1px solid var(--line);
-      background:rgba(11,18,32,.78);backdrop-filter:blur(10px);
+      padding:16px 18px;
+      border-bottom:1px solid var(--divider);
+      background:rgba(246,248,250,.82);
+      backdrop-filter:blur(10px);
     }
     .brand{display:flex;align-items:flex-start}
-    .brand__logo{width:720px;height:230px;object-fit:contain;display:block}
-    .topbar__nav{display:flex;gap:14px;align-items:center;padding-top:6px;flex-wrap:wrap;justify-content:flex-end}
-    .navlink{padding:10px 12px;border-radius:12px;color:var(--muted);border:1px solid transparent;font-weight:650}
-    .navlink:hover{color:var(--text);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
-    .navlink--active{color:var(--text);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
-    .card{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);border-radius:32px;padding:26px;box-shadow:var(--shadow)}
-    h1{margin:0 0 10px;font-size:34px;line-height:1.1;letter-spacing:-.02em}
-    p{margin:0 0 12px;color:var(--muted);line-height:1.65}
-    .lead{color:rgba(231,236,255,.92)}
-    @media (max-width:980px){.brand__logo{width:320px;height:90px}}
+    .brand__logo{
+      width:720px;height:230px;
+      object-fit:contain;display:block;
+      filter: drop-shadow(0 10px 18px rgba(31,58,95,.12));
+    }
+
+    .topbar__nav{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding-top:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .navlink{
+      padding:10px 12px;
+      border-radius:12px;
+      color: rgba(31,58,95,.78);
+      border:1px solid transparent;
+      font-weight:850;
+      background:transparent;
+    }
+    .navlink:hover{
+      color:var(--text);
+      border-color:var(--divider);
+      background:rgba(255,255,255,.88);
+    }
+    .navlink--active{
+      color:var(--text);
+      background:rgba(255,255,255,.92);
+      border-color:var(--divider);
+    }
+
+    .card{
+      border:1px solid var(--divider);
+      background:rgba(255,255,255,.92);
+      border-radius:28px;
+      padding:26px;
+      box-shadow:var(--shadow);
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:34px;
+      line-height:1.1;
+      letter-spacing:-.02em;
+      color:var(--primary);
+      font-weight:950;
+    }
+    p{
+      margin:0 0 12px;
+      color:rgba(94,122,138,.98);
+      line-height:1.65;
+      font-weight:650;
+      max-width: 95ch;
+    }
+    .lead{
+      color:rgba(31,58,95,.92);
+      font-weight:750;
+    }
+
+    @media (max-width:980px){
+      .brand__logo{width:320px;height:90px}
+      .topbar{flex-wrap:wrap;gap:10px}
+    }
   </style>
 </head>
+
 <body>
   <header class="topbar">
     <a class="brand" href="index.html" aria-label="endmysub home">
       <img class="brand__logo" src="endmysublogo.png" alt="endmysub logo" />
     </a>
+
     <nav class="topbar__nav">
       <a class="navlink" href="index.html">Start</a>
       <a class="navlink" href="impressum.html">Impressum</a>
       <a class="navlink" href="contact.html">Kontakt</a>
-      <a class="navlink" href="Payment.html">Review</a>
-      <a class="navlink navlink--active" href="about.html">About</a>
+      <a class="navlink" href="review.html">Review</a>
     </nav>
   </header>
 
   <main class="container">
     <section class="card">
       <h1>Warum endmysub?</h1>
-      <p class="lead">endmysub wurde gegründet, weil Kündigen für viele Menschen unnötig schwer ist.</p>
+      <p class="lead">endmysub wurde gegründet, weil die Kündigung von Abonnements häufig unnötig kompliziert und intransparent gestaltet ist.</p>
 
       <p>Viele Dienste machen das Beenden unnötig umständlich: Der Kündigungsweg ist schwer zu finden, man wird durch mehrere Schritte geführt, und am Ende ist oft nicht ganz klar, ob alles wirklich abgeschlossen ist. Genau da verlieren viele den Überblick – und zahlen länger, als sie eigentlich wollten.</p>
 

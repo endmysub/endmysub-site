@@ -1,9 +1,11 @@
 <!-- Payment.html (FULL) — PayPal Hosted Buttons (PayPal + Debit/Credit), kein Stripe
   FIX:
-  - Logo deutlich größer
-  - "endmysub" Text neben Logo entfernt
-  - Zusatzinfo komplett entfernt (UI + JS)
-  - Redirect nach success.html nach erfolgreicher Zahlung (falls HostedButtons onApprove unterstützt)
+  - "Zurück" führt hart zu cancel.html (window.location.href), nicht nur Link
+  - Logo: korrigiert (mit Fallback-Pfaden + klare Anzeige)
+  - Rechtes Panel: farbiger Hintergrund + Header-Leiste (Palette)
+  - Palette: Deep Blue / Soft Slate / Off-White / Muted Green / Warm Gray
+  - Rechte Panel-Daten: liest aus localStorage "ems_cancel_data"
+  - Footer bleibt unten
 -->
 <!doctype html>
 <html lang="de">
@@ -11,16 +13,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>endmysub — Zahlung</title>
+  <meta name="theme-color" content="#1F3A5F" />
 
   <style>
     :root{
-      --bg0:#070b14;
-      --bg1:#0b1220;
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --card:rgba(255,255,255,.06);
-      --stroke:rgba(255,255,255,.12);
-      --shadow:0 18px 40px rgba(0,0,0,.35);
+      /* Palette */
+      --primary:#1F3A5F;     /* Deep Blue */
+      --slate:#5E7A8A;       /* Soft Slate */
+      --bg:#F6F8FA;          /* Off-White */
+      --green:#4CAF8A;       /* Muted Green */
+      --divider:#E1E5EA;     /* Warm Gray */
+
+      /* UI */
+      --text:#1F3A5F;
+      --muted:#5E7A8A;
+
+      --card: rgba(255,255,255,.92);
+      --shadow: 0 18px 40px rgba(31,58,95,.12);
       --radius:16px;
       --max:980px;
     }
@@ -32,76 +41,126 @@
       color:var(--text);
       font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
       background:
-        radial-gradient(900px 520px at 20% 10%, rgba(53,224,143,.24), transparent 60%),
-        radial-gradient(900px 520px at 80% 20%, rgba(96,165,250,.18), transparent 62%),
-        linear-gradient(180deg,var(--bg0),var(--bg1));
+        radial-gradient(900px 520px at 20% 10%, rgba(76,175,138,.18), transparent 60%),
+        radial-gradient(900px 520px at 80% 20%, rgba(94,122,138,.18), transparent 62%),
+        linear-gradient(180deg, #ffffff, var(--bg));
       overflow-x:hidden;
     }
 
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max);margin:0 auto;padding:26px 20px 60px}
+    .wrap{max-width:var(--max);margin:0 auto;padding:26px 20px 40px}
 
     .top{
       display:flex;align-items:center;justify-content:space-between;gap:16px;
-      padding:14px 0 18px;border-bottom:1px solid rgba(255,255,255,.08);
+      padding:14px 0 18px;border-bottom:1px solid var(--divider);
     }
-    .brand{
-      display:flex;align-items:center;
-    }
+
+    .brand{display:flex;align-items:center;min-height:70px}
     .logo{
       width:520px;
-      height:150px;
+      height:180px;
       display:block;
-      filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));
       object-fit:contain;
+      filter:drop-shadow(0 10px 18px rgba(31,58,95,.18));
     }
 
     .btn{
       display:inline-flex;align-items:center;justify-content:center;
-      height:44px;padding:0 16px;border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:var(--text);font-weight:900;cursor:pointer;
+      height:44px;padding:0 18px;border-radius:14px;
+      border:1px solid var(--divider);
+      background:rgba(255,255,255,.90);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
       transition:.15s ease;
       user-select:none;
       white-space:nowrap;
     }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.085)}
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.98)}
     .btn:active{transform:translateY(0)}
 
     .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:18px}
+
     .card{
-      border:1px solid var(--stroke);
-      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.05));
+      border:1px solid var(--divider);
+      background: var(--card);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding:16px;
     }
-    h1{margin:0 0 8px;font-size:28px;letter-spacing:-.3px}
-    p{margin:0 0 10px;color:var(--muted)}
-    .price{font-weight:900;font-size:22px}
+
+    /* Right panel styling */
+    .side{
+      padding:0;
+      overflow:hidden;
+      background:
+        radial-gradient(700px 420px at 10% 0%, rgba(76,175,138,.18), transparent 55%),
+        radial-gradient(700px 420px at 90% 10%, rgba(94,122,138,.18), transparent 58%),
+        linear-gradient(180deg, rgba(31,58,95,.06), rgba(31,58,95,.03));
+    }
+    .sideHead{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      padding:14px 16px;
+      border-bottom:1px solid rgba(31,58,95,.10);
+      background: rgba(31,58,95,.08);
+    }
+    .sideBody{padding:16px}
+
+    h1{margin:0 0 8px;font-size:28px;letter-spacing:-.3px;color:var(--primary)}
+    p{margin:0 0 10px;color:var(--muted);font-weight:650}
+
+    .price{font-weight:950;font-size:22px;color:var(--primary)}
     .muted{color:var(--muted)}
-    .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+
+    .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(31,58,95,.12)}
     .row:last-child{border-bottom:none}
-    .label{font-weight:900;color:rgba(255,255,255,.78)}
-    .val{color:rgba(255,255,255,.92);text-align:right;max-width:60%}
-    .note{margin-top:10px;font-size:12.5px;color:rgba(255,255,255,.62)}
-    .status{margin-top:10px;font-size:13px}
-    .warn{color:#ffd3b0}
-    .ok{color:#c6ffe9}
+    .label{font-weight:950;color:rgba(31,58,95,.92)}
+    .val{color:rgba(31,58,95,.92);text-align:right;max-width:60%;font-weight:850}
+
+    .note{margin-top:10px;font-size:12.5px;color:rgba(94,122,138,.96);font-weight:700}
+    .status{margin-top:10px;font-size:13px;font-weight:850}
+    .warn{color:#9a4f2a}
+    .ok{color:var(--primary)}
 
     .paybox{
       margin-top:14px;
       padding:12px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.14);
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.92);
     }
+
+    footer{
+      margin-top: 28px;
+      border-top: 1px solid var(--divider);
+      background: rgba(255,255,255,.70);
+    }
+    .footwrap{max-width:var(--max);margin:0 auto;padding:22px 20px 28px}
+    .footgrid{
+      display:grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 16px;
+      align-items:start;
+    }
+    .footbrand{font-weight:950;color:var(--primary);margin-bottom:8px}
+    .foottext{color:rgba(94,122,138,.98);font-weight:650;max-width:78ch}
+    .footlinks{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+    .footlinks a{
+      color: rgba(31,58,95,.84);
+      font-weight: 900;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border:1px solid var(--divider);
+      background: rgba(255,255,255,.88);
+    }
+    .footlinks a:hover{background: rgba(255,255,255,.98)}
 
     @media (max-width: 920px){
       .grid{grid-template-columns:1fr}
       .val{max-width:70%}
-      .logo{width:360px;height:110px}
+      .logo{width:380px;height:180px}
+      .footgrid{grid-template-columns:1fr}
+      .footlinks{justify-content:flex-start}
     }
   </style>
 
@@ -115,9 +174,10 @@
   <div class="wrap">
     <div class="top">
       <a class="brand" href="index.html" aria-label="endmysub home">
-        <img class="logo" src="endmysublogo.png" alt="endmysub Logo" onerror="this.style.display='none'" />
+        <img id="logoImg" class="logo" src="endmysublogo.png" alt="endmysub Logo" />
       </a>
-      <a class="btn" href="cancel.html">Zurück</a>
+
+      <button class="btn" id="btnBack" type="button">Zurück</button>
     </div>
 
     <div class="grid">
@@ -142,26 +202,71 @@
         </div>
       </div>
 
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+      <div class="card side">
+        <div class="sideHead">
           <div class="label">Deine Anfrage</div>
-          <div class="muted" style="font-weight:900;font-size:12.5px;">aus index.html</div>
+          <div class="muted" style="font-weight:950;font-size:12.5px;"></div>
         </div>
 
-        <div style="margin-top:10px;">
+        <div class="sideBody">
           <div class="row"><div class="label">Abo / Anbieter</div><div class="val" id="v_service">—</div></div>
           <div class="row"><div class="label">Land</div><div class="val" id="v_country">—</div></div>
           <div class="row"><div class="label">E-Mail</div><div class="val" id="v_email">—</div></div>
-        </div>
 
-        <div class="note">
-          Wenn hier „—“ steht, wurde das Formular auf der Startseite nicht abgesendet. Dann zurück und neu starten.
+          <div class="note">
+            Wenn hier „—“ steht, wurde das Formular auf der Startseite nicht abgesendet. Dann zurück und neu starten.
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <footer>
+    <div class="footwrap">
+      <div class="footgrid">
+        <div>
+          <div class="footbrand">endmysub</div>
+          <div class="foottext">
+            Unabhängiger Kündigungsservice. Keine Rechtsberatung. Keine Verbindung zu den Anbietern.
+            <br><br>
+            Review hilft, echte Ergebnisse sichtbar zu machen: kurzes Feedback nach Abschluss, klare Qualität, bessere Transparenz im Ablauf.
+          </div>
+        </div>
+
+        <div class="footlinks">
+          <a href="ToS.html">Nutzungsbedingungen</a>
+          <a href="privacy.html">Datenschutz</a>
+          <a href="impressum.html">Impressum</a>
+          <a href="contact.html">Kontakt</a>
+          <a href="review.html">Review</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
   <script>
+    // === Back button (hard redirect) ===
+    document.getElementById("btnBack").addEventListener("click", () => {
+      window.location.href = "cancel.html";
+    });
+
+    // === Logo fallback paths (fix missing logo on GitHub Pages folders) ===
+    (function(){
+      const img = document.getElementById("logoImg");
+      const candidates = [
+        "endmysublogo.png",
+        "./endmysublogo.png",
+        "../endmysublogo.png",
+        "/endmysublogo.png"
+      ];
+      let i = 0;
+      img.onerror = () => {
+        i++;
+        if (i < candidates.length) img.src = candidates[i];
+        else img.style.display = "none";
+      };
+    })();
+
     // ==== UI / Status ====
     const st = document.getElementById("st");
     function warn(msg){ st.className="status warn"; st.textContent = msg; }
@@ -169,9 +274,9 @@
 
     // ==== Load request from localStorage ====
     let req = null;
-    try { req = JSON.parse(localStorage.getItem("endmysub_request") || "null"); } catch(_){}
+    try { req = JSON.parse(localStorage.getItem("ems_cancel_data") || "null"); } catch(_) {}
 
-    const set = (id, v) => document.getElementById(id).textContent = v || "—";
+    const set = (id, v) => document.getElementById(id).textContent = (v && String(v).trim()) ? String(v).trim() : "—";
     set("v_service", req?.service);
     set("v_country", req?.country);
     set("v_email", req?.email);
@@ -188,12 +293,7 @@
       try{
         paypal.HostedButtons({
           hostedButtonId,
-
-          // NOTE:
-          // Nicht jeder Hosted-Buttons-Modus feuert Callbacks. Wenn PayPal diese Callbacks ignoriert,
-          // gibt es KEIN Redirect -> dann musst du auf normale Buttons (components=buttons) wechseln.
           onApprove: (data) => {
-            // Speichern für success.html / Admin-Abgleich
             localStorage.setItem("ems_paypal_order_id", data?.orderID || "");
             localStorage.setItem("ems_paypal_payer_id", data?.payerID || "");
             window.location.href = "success.html";
@@ -210,7 +310,6 @@
       }
     }
 
-    // sofort versuchen + kurz nachladen
     if (!renderPaypal()){
       let tries = 0;
       const t = setInterval(() => {
