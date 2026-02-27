@@ -508,17 +508,22 @@
       .replaceAll("'","&#039;");
   }
 
+  // ---- FIX 1: correct global usage + fail fast if CDN blocked ----
   if (!window.supabase){
     setStatusWarn("Supabase library not loaded. Check internet or CDN blocked.");
   }
 
-  const sb = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+  const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+  if (!sb){
+    throw new Error("Supabase client not created (CDN blocked or init failed).");
+  }
+  // ---------------------------------------------------------------
 
   async function refreshAuth(){
-    if (!sb) return;
     try{
       const { data, error } = await sb.auth.getSession();
       if (error) authMsg.textContent = error.message;
+
       const user = data?.session?.user || null;
       setAuthedUI(user);
 
@@ -534,7 +539,6 @@
   }
 
   btnLogin.addEventListener("click", async () => {
-    if (!sb) return;
     authMsg.textContent = "";
     setBusy(true);
     setStatusOk("Logging in...");
@@ -560,7 +564,6 @@
   });
 
   btnSignup.addEventListener("click", async () => {
-    if (!sb) return;
     authMsg.textContent = "";
     setBusy(true);
     setStatusOk("Creating account...");
@@ -574,8 +577,8 @@
         authMsg.textContent = error.message;
         setStatusWarn(error.message);
       } else {
-        authMsg.textContent = "Account created. Login now.";
-        setStatusOk("Account created. Login now.");
+        authMsg.textContent = "Account created. If email confirmation is enabled, confirm first.";
+        setStatusOk("Account created. If email confirmation is enabled, confirm first.");
       }
     } catch (e){
       setStatusWarn("Failed to fetch. Use Live Server (http://...), not file://");
@@ -585,7 +588,6 @@
   });
 
   btnLogout.addEventListener("click", async () => {
-    if (!sb) return;
     setBusy(true);
     try{
       await sb.auth.signOut();
@@ -599,13 +601,16 @@
   filterEl.addEventListener("change", () => loadReviews());
 
   btnPost.addEventListener("click", async () => {
-    if (!sb) return;
     postMsg.textContent = "";
     setBusy(true);
 
     const { data: s } = await sb.auth.getSession();
     const user = s?.session?.user;
-    if (!user){ setStatusWarn("Not logged in."); setBusy(false); return; }
+    if (!user){
+      setStatusWarn("Not logged in.");
+      setBusy(false);
+      return;
+    }
 
     const display_name = document.getElementById("displayName").value.trim() || "Customer";
     const rating = parseInt(document.getElementById("rating").value, 10);
@@ -620,7 +625,15 @@
     }
 
     try{
-      const payload = { user_id: user.id, display_name, rating, title, body, approved: false };
+      const payload = {
+        user_id: user.id,
+        display_name,
+        rating,
+        title,
+        body,
+        approved: false
+      };
+
       const { error } = await sb.from("reviews").insert(payload);
 
       if (error){
@@ -639,8 +652,6 @@
   });
 
   async function loadReviews(){
-    if (!sb) return;
-
     const filter = document.getElementById("filter").value;
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -687,7 +698,11 @@
       el.innerHTML = `
         <div class="revTop">
           <div>
-            <div class="stars">${stars(r.rating)} <span style="font-weight:800;color:${pending ? "#ffd3b0" : "rgba(246,248,250,.66)"};font-size:12px">${pending ? "(pending)" : ""}</span></div>
+            <div class="stars">${stars(r.rating)}
+              <span style="font-weight:800;color:${pending ? "#ffd3b0" : "rgba(246,248,250,.66)"};font-size:12px">
+                ${pending ? "(pending)" : ""}
+              </span>
+            </div>
             <div class="revTitle">${escapeHtml(r.title)}</div>
           </div>
           <div class="revMeta">${escapeHtml(r.display_name)} · ${escapeHtml(fmtDate(r.created_at))}</div>
@@ -702,14 +717,12 @@
     }
   }
 
-  if (sb){
-    sb.auth.onAuthStateChange((_event, session) => {
-      setAuthedUI(session?.user || null);
-    });
+  sb.auth.onAuthStateChange((_event, session) => {
+    setAuthedUI(session?.user || null);
+  });
 
-    setStatusOk("Ready.");
-    refreshAuth();
-  }
+  setStatusOk("Ready.");
+  refreshAuth();
 </script>
 </body>
 </html>
